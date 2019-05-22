@@ -1,4 +1,4 @@
-module TTT()
+module source(CLOCK, RESET)
 
-  
 endmodule
+
