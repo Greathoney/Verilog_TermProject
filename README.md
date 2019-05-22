@@ -2,7 +2,7 @@
 논리회로이론 및 설계에서 배운 내용을 바탕으로 베릴로그와 엔트리 장비를 이용하여 텀 프로젝트를 진행합니다.
 이 레포지터리는 프로젝트 파일 전체가 올라가는 것이 아닌 베릴로그 소스코드만 올라갑니다.
 
-## TIC TAC TOE를 구현
+## TIC TAC TOE
 Entry 장비를 이용하여 TIC TAC TOE를 구현하고자 합나다. 기본적으로 2인 플레이로 진행합니다.
 
 #### dox maxtrix를 이용하여 보드 구현하기
@@ -46,6 +46,6 @@ dip switch를 이용하여 타이머모드를 활성화하고, 제한시간을 �
 7-segment에 남는 시간이 표시되게 됩니다.
 시간이 흘러도 다 하지 못하면 시간패로 승부가 갈리게 됩니다.
 
-** 참고 **
+**참고**
 TIC TAC TOC의 설명 및 Pygame을 이용하여 구현한 TIC TAC TOE:
 https://github.com/yh08037/Abstract_strategy_game/tree/master/02%20tic%20tac%20toe
