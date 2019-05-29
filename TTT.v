@@ -25,8 +25,9 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com)
     { 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     }; //매트릭스에 어떤 값을 띄울 것인지 확인
 
-  keypad_scan U0(clk, rst, key_col, key_row, key_data); //키패드 스캔하기
-  dot_display U1(clk, rst, dot_col, dot_row); //dot_display 띄우기
+  mainState U0();
+  keypad_scan U1(clk, rst, key_col, key_row, key_data); //키패드 스캔하기
+  dot_display U2(clk, rst, dot_col, dot_row); //dot_display 띄우기
   //더 많은 것들...
 
 endmodule
