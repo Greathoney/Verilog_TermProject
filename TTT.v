@@ -1,4 +1,4 @@
-module TTT(clk, rst, key_row, key_col, seg_txt, seg_com)
+module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row)
   input clk, rst; //클럭, 리셋
   input	[3:0]key_row; //keypad 스캔
 	output [2:0]key_col; //keypad 스캔
@@ -15,7 +15,8 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com)
 
   keypad_scan U0(clk, rst, key_col, key_row, key_data); //키패드 스캔하기
   mainState U1(clk, key_data, IsItMain, seg_txt, seg_com);//main상태에서 입력을 받는 모듈
-  dot_display U2(clk, rst, dot_col, dot_row); //dot_display 띄우기
+
+  dot_display U2(clk, rst, dot_col, dot_row); //dot_display 띄우기 //미완
   //더 많은 것들...
 
 endmodule
