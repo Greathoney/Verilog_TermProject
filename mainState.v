@@ -3,7 +3,7 @@ module mainState(clk, key_data, IsItMain, seg_txt, seg_com)
   input IsItMain;
   output [6:0] seg_txt;
   output [7:0] seg_com;
-
+	input clk;
   reg [26:0]clk_count;
   reg [3:0] sel_seg;
   reg clk1;
@@ -29,12 +29,12 @@ module mainState(clk, key_data, IsItMain, seg_txt, seg_com)
 
   always @(IsItMain and sel_sag) //sel_sag을 기반으로 7-segment에 표시
     case(sel_sag)
-      0: begin seg_com <= 8'01111111 seg_text <= 7'b1111100 end //p
-      1: begin seg_com <= 8'10111111 seg_text <= 7'00011000 end //r
-      2: begin seg_com <= 8'11011111 seg_text <= 7'b1101101 end //e
-      3: begin seg_com <= 8'11101111 seg_text <= 7'b1101010 end //s
-      4: begin seg_com <= 8'11110111 seg_text <= 7'b1101010 end //s
-      5: begin seg_com <= 8'11111011 seg_text <= 7'b0000000 end //' '
-      6: begin seg_com <= 8'11111101 seg_text <= 7'b1110111 end //0
-      7: begin seg_com <= 8'11111110 seg_text <= 7'b0010010 end //1
+      0: begin seg_com <= 8'b01111111; seg_text <= 7'b1111100; end //p
+      1: begin seg_com <= 8'b10111111; seg_text <= 7'b0001100; end //r
+      2: begin seg_com <= 8'b11011111; seg_text <= 7'b1101101; end //e
+      3: begin seg_com <= 8'b11101111; seg_text <= 7'b1101010; end //s
+      4: begin seg_com <= 8'b11110111; seg_text <= 7'b1101010; end //s
+      5: begin seg_com <= 8'b11111011; seg_text <= 7'b0000000; end //' '
+      6: begin seg_com <= 8'b11111101; seg_text <= 7'b1110111; end //0
+      7: begin seg_com <= 8'b11111110; seg_text <= 7'b0010010; end //1
 endmodule
