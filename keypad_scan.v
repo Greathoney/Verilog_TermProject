@@ -51,7 +51,7 @@ module keypad_scan(clk, rst, key_col, key_row, key_data);
 	  	4'b0001 : key_data <= 12'b0000_0000_0001; // key_1
 	  	4'b0010 : key_data <= 12'b0000_0000_1000; // key_4
 	  	4'b0100 : key_data <= 12'b0000_0100_0000; // key_7
-	  	4'b0001 : key_data <= 12'b0010_0000_0000; // key_*
+	  	4'b0000 : key_data <= 12'b0010_0000_0000; // key_*
 	  	default : key_data <= 12'b000000000000;
 	  	endcase
 	  column2 : case (key_row)

@@ -8,7 +8,7 @@ module mainState(clk, key_data, IsItMain, seg_txt, seg_com)
   reg [3:0] sel_seg;
   reg clk1;
 
-  always @(IsItMain  and key_data = 12'b1000_000_000) begin  //키 1번이 입력되면 Main이 풀리게 설계
+  always @(IsItMain and key_data = 12'b1000_000_000) begin  //키 1번이 입력되면 Main이 풀리게 설계
     IsItMain = 0;
   end
 
