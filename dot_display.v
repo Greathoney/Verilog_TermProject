@@ -1,8 +1,12 @@
-module dot_display(freq, rst, dot_col, dot_row);
+    
+module dot_display(freq, rst, board, dot_col, dot_row);
 		
-	input freq, rst;
+	input freq;
+	input rst;
+	input [1:0] board [8:0];
 	output [13:0] dot_col;
 	output [9:0] dot_row;
+	reg [1:0] board [8:0];
 	reg [13:0] dot_col;
 	reg [9:0] dot_row;
 	reg [3:0] cnt_row, cnt_fra;
@@ -59,40 +63,54 @@ module dot_display(freq, rst, dot_col, dot_row);
 
 	always @ (cnt_fra) begin
 		case (cnt_fra)
-			0: dot_col = rom1(cnt_row);
-			1: dot_col = rom1(cnt_row);
-			2: dot_col = rom1(cnt_row);
-			3: dot_col = rom1(cnt_row);
-			4: dot_col = rom1(cnt_row);
-			5: dot_col = rom1(cnt_row);
-			6: dot_col = rom1(cnt_row);
-			7: dot_col = rom1(cnt_row);
-			8: dot_col = rom1(cnt_row);
-			9: dot_col = rom1(cnt_row);
+			0: dot_col = rom1(cnt_row, board);
+			1: dot_col = rom1(cnt_row, board);
+			2: dot_col = rom1(cnt_row, board);
+			3: dot_col = rom1(cnt_row, board);
+			4: dot_col = rom1(cnt_row, board);
+			5: dot_col = rom1(cnt_row, board);
+			6: dot_col = rom1(cnt_row, board);
+			7: dot_col = rom1(cnt_row, board);
+			8: dot_col = rom1(cnt_row, board);
+			9: dot_col = rom1(cnt_row, board);
 		default: dot_col = 0;
 		endcase
 	end
 	
-	
-function [13:0] rom1;
-	input [3:0] addr_in;
-	
-	begin 
-		case (addr_in)
-			0: rom1 = 14'b00000000000000;
-			1: rom1 = 14'b00000111111111;
-			2: rom1 = 14'b00111111111111;
-			3: rom1 = 14'b00111100000000;
-			4: rom1 = 14'b11000000000000;
-			5: rom1 = 14'b11000000000000;
-			6: rom1 = 14'b01111000000000;
-			7: rom1 = 14'b00111111111111;
-			8: rom1 = 14'b00000111111111;
-			9: rom1 = 14'b00000000000000;
-		default: rom1 = 14'b00000000000000;
-		endcase
-	end
-endfunction
-			
-endmodule		
+		
+	function [13:0] rom1;
+		input [3:0] row;
+		input [1:0] b [8:0]; // [1:0] board [2:0][2:0] 
+		
+		begin 
+			rom1 = {3'b'000, fun(row, b[6+row/4]), 1'b0, fun(row, b[3+row/4]), 1'b0, fun(row, b[row/4])};
+		end
 
+
+		function [2:0] fun;
+			input [3:0] row;
+			input [1:0] boardElement;
+			
+			begin
+				if (row % 4 == 1) begin
+					case (boardElement)
+						0: fun = 3'b000;
+						1: fun = 3'b010;
+						2: fun = 3'b101;
+					endcase
+				end
+				else if (row % 4 == 3) fun = 3'b000;
+				else begin 
+					case (boardElement)
+						0: fun = 3'b000;
+						1: fun = 3'b101;
+						2: fun = 3'b010;
+					endcase
+				end
+			end
+			
+		endfunction	
+		
+	endfunction
+
+endmodule
