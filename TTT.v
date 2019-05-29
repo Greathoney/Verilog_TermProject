@@ -1,8 +1,8 @@
-module TTT(clk, rst, [3:0]key_row, [2:0]key_col, [6:0]seg_dec, [7:0]seg_com)
+module TTT(clk, rst, [3:0]key_row, [2:0]key_col, [6:0]seg_txt, [7:0]seg_com)
   input clk, rst; //클럭, 리셋
   input	[3:0]key_row; //keypad 스캔
 	output [2:0]key_col; //keypad 스캔
-  output [6:0]seg_dec; //7-segment 한 자리에 대해 수 표현
+	output [6:0]seg_txt; //7-segment 한 자리에 대해 문자 표현
   output [7:0]seg_com; //7-segment 위치 결정
 
   reg [11:0]key_data; //key_row, key_col을 바탕으로 값 결정
