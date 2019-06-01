@@ -1,9 +1,9 @@
-    
+
 module dot_display(freq, rst, board, dot_col, dot_row);
-		
+
 	input freq;
 	input rst;
-	input [1:0] board [8:0];
+	input [17:0] board;
 	output [13:0] dot_col;
 	output [9:0] dot_row;
 	reg [1:0] board [8:0];
@@ -14,13 +14,13 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 	reg clk_col, clk_fra;
 	reg clk;
 	reg [14:0] count;
-	
+
 	always @ (posedge freq or posedge rst) begin
 		if (rst) begin count <= 0; clk <= 1; end
 		else if (count >= 12499) begin count <= 0; clk <= ~clk; end
-		else count <= count + 1; 
+		else count <= count + 1;
 	end
-	
+
 	always @ (posedge clk or posedge rst) begin
 		if (rst) begin
 			dot_row <= 1;
@@ -40,7 +40,7 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 			end
 		end
 	end
-	
+
 	always @ (posedge clk_col or posedge rst) begin
 		if (rst) begin
 			cnt_col <= 0;
@@ -52,7 +52,7 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 			end
 		end
 	end
-	
+
 	always @ (posedge clk_fra or posedge rst) begin
 		if (rst) cnt_fra <= 0;
 		else begin
@@ -76,13 +76,15 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 		default: dot_col = 0;
 		endcase
 	end
-	
-		
+
+
+    // 현재 행 위치와 board를 입력으로 받아
+    // dot matrix display의 한 행의 값을 반환하는 함수
 	function [13:0] rom1;
 		input [3:0] row;
-		input [1:0] b [8:0]; // [1:0] board [2:0][2:0] 
-		
-		begin 
+		input [1:0] b [8:0]; // [1:0] board [2:0][2:0]
+
+		begin
 			rom1 = {3'b'000, fun(row, b[6+row/4]), 1'b0, fun(row, b[3+row/4]), 1'b0, fun(row, b[row/4])};
 		end
 
@@ -90,7 +92,7 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 		function [2:0] fun;
 			input [3:0] row;
 			input [1:0] boardElement;
-			
+
 			begin
 				if (row % 4 == 1) begin
 					case (boardElement)
@@ -100,7 +102,7 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 					endcase
 				end
 				else if (row % 4 == 3) fun = 3'b000;
-				else begin 
+				else begin
 					case (boardElement)
 						0: fun = 3'b000;
 						1: fun = 3'b101;
@@ -108,9 +110,9 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 					endcase
 				end
 			end
-			
-		endfunction	
-		
+
+		endfunction
+
 	endfunction
 
 endmodule
