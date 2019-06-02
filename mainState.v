@@ -1,40 +1,55 @@
-module mainState(clk, key_data, IsItMain, seg_txt, seg_com)
+module mainState(clk, key_data, IsMain, seg_txt, seg_com);
+  //¸ÞÀÎ¸Þ´º¿¡¼­ÀÇ »óÅÂ¸¦ Ç¥½ÃÇÕ´Ï´Ù. IsMain = 1ÀÏ¶§¸¸ È°¼ºÈ­, 0À¸·Î ¹Ù²ð¼ö ÀÖ´Â Á¶°Ç °®Ãã
   input [11:0] key_data;
-  input IsItMain;
+	input clk;
+  inout IsMain;
   output [6:0] seg_txt;
   output [7:0] seg_com;
-	input clk;
-  reg [26:0]clk_count;
-  reg [3:0] sel_seg;
+  reg [20:0]clk_count;
+	reg [7:0] seg_com;
+	reg [6:0] seg_txt;
+	reg IsItMain;
+  reg [3:0] sel_seg = 4'b0000;
   reg clk1;
 
-  always @(IsItMain and key_data = 12'b1000_000_000) begin  //í‚¤ 1ë²ˆì´ ìž…ë ¥ë˜ë©´ Mainì´ í’€ë¦¬ê²Œ ì„¤ê³„
-    IsItMain = 0;
-  end
+  always @(posedge clk) begin // clk1 ¼³°è
+		if (IsMain == 1) begin
+	    if (clk_count >= 24999) begin
+	      clk_count <= 0;
+	     	clk1 <= 1;
+	    end
+	    else begin
+	      clk_count <= clk_count + 1;
+	      clk1 <= 0;
+	    end
+  	end
 
-  always @(IsItMain and negedge clk) begin // clk1 ì„¤ê³„
-    if (clk_count == 25000000) begin
-      clk_count <= 0;
-      clk1 <= 1;
-    end
-    else begin
-      clk_count <= clk_count + 1;
-      clk1 <= 0;
-    end
-  end
+		always @(posedge clk1) begin  //Å° 1¹øÀÌ ÀÔ·ÂµÇ¸é MainÀÌ Ç®¸®°í °ÔÀÓ¸ðµå·Î ÁøÀÔÇÏµµ·Ï ¼³°è
+			if (IsMain == 1) begin
+				if (key_data == 12'b0000_0000_0001) begin
+	    		IsMain <= 0;
+        end
+      end
+	  end
 
-  always @(IsItMain and clk1) begin //clk1ì„ ê¸°ë°˜ìœ¼ë¡œ sel_sag ì„¤ê³„
-    if (sel_seg == 7) sel_sag <= 0;
-    else sel_sag <= sel_sag + 1;
+  always @(posedge clk1) begin //clk1À» ±â¹ÝÀ¸·Î sel_seg ¼³°è
+		if (IsMain == 1) begin
+    	if (sel_seg == 7) sel_seg <= 0;
+    		else sel_seg <= sel_seg + 1;
+			end
+		end
 
-  always @(IsItMain and sel_sag) //sel_sagì„ ê¸°ë°˜ìœ¼ë¡œ 7-segmentì— í‘œì‹œ
-    case(sel_sag)
-      0: begin seg_com <= 8'b01111111; seg_text <= 7'b1111100; end //p
-      1: begin seg_com <= 8'b10111111; seg_text <= 7'b0001100; end //r
-      2: begin seg_com <= 8'b11011111; seg_text <= 7'b1101101; end //e
-      3: begin seg_com <= 8'b11101111; seg_text <= 7'b1101010; end //s
-      4: begin seg_com <= 8'b11110111; seg_text <= 7'b1101010; end //s
-      5: begin seg_com <= 8'b11111011; seg_text <= 7'b0000000; end //' '
-      6: begin seg_com <= 8'b11111101; seg_text <= 7'b1110111; end //0
-      7: begin seg_com <= 8'b11111110; seg_text <= 7'b0010010; end //1
+  always @(sel_seg) //sel_segÀ» ±â¹ÝÀ¸·Î 7-segment¿¡ Ç¥½Ã
+		if (IsMain == 1) begin
+	    case(sel_seg)
+	      0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
+	      1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1010000; end //r =>eg
+	      2: begin seg_com <= 8'b11011111; seg_txt <= 7'b1111001; end //e =>adefg
+	      3: begin seg_com <= 8'b11101111; seg_txt <= 7'b1101101; end //s =>acdfg
+	      4: begin seg_com <= 8'b11110111; seg_txt <= 7'b1101101; end //s =>acdfg
+	      5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0000000; end //' '
+	      6: begin seg_com <= 8'b11111101; seg_txt <= 7'b0111111; end //0 =>abcdef
+	      7: begin seg_com <= 8'b11111110; seg_txt <= 7'b0000110; end //1 =>bc
+			endcase
+		end
 endmodule

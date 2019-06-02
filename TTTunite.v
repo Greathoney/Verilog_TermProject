@@ -22,7 +22,8 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 
   keypad_scan U1(clk, rst, key_col, key_row, key_data); //키패드 스캔하기, key_data를 받아옴
   mainState U2(clk, key_data, IsMain, seg_txt, seg_com); //main상태에서 입력을 받는 모듈
-	gameState U3(clk, key_data, IsItMain, IsItRight, IsTurnO, board);
+	gameState U3(clk, key_data, IsItMain, IsItRight, IsTurnO, board); //game상태에서 입력을 받는 모듈
+
 
   //더 많은 것들...
 
@@ -112,7 +113,6 @@ module mainState(clk, key_data, IsMain, seg_txt, seg_com);
   reg [3:0] sel_seg = 4'b0000;
   reg clk1;
 
-
   always @(posedge clk) begin // clk1 설계
 		if (IsMain == 1) begin
 	    if (clk_count >= 24999) begin
@@ -153,7 +153,7 @@ module mainState(clk, key_data, IsMain, seg_txt, seg_com);
 		end
 endmodule
 
-module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board);
+module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row);
 	//게임상태에서의 환경을 구축합니다.
 	input clk;
 	input [11:0]key_data;
@@ -161,6 +161,19 @@ module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board);
 	inout IsItRight;
 	inout IsTurnO;
 	inout [18:0] board;
+
+	always @(posedge clk) begin // clk1 설계
+		if (IsMain == 1) begin
+	    if (clk_count >= 24999) begin
+	      clk_count <= 0;
+	     	clk1 <= 1;
+	    end
+	    else begin
+	      clk_count <= clk_count + 1;
+	      clk1 <= 0;
+	    end
+  	end
+
 
 	always @(IsTurnO) begin
 		if (IsTurnO == 1)

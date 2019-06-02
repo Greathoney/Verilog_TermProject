@@ -52,21 +52,21 @@ module keypad_scan(clk, rst, key_col, key_row, key_data);
 	  	4'b0010 : key_data <= 12'b0000_0000_1000; // key_4
 	  	4'b0100 : key_data <= 12'b0000_0100_0000; // key_7
 	  	4'b0000 : key_data <= 12'b0010_0000_0000; // key_*
-	  	default : key_data <= 12'b000000000000;
+	  	default : key_data <= 12'b0000_0000_0000;
 	  	endcase
 	  column2 : case (key_row)
 	  	4'b0001 : key_data <= 12'b0000_0000_0010; // key_2
 	  	4'b0010 : key_data <= 12'b0000_0001_0000; // key_5
 	  	4'b0100 : key_data <= 12'b0000_1000_0000; // key_8
 	  	4'b0001 : key_data <= 12'b0100_0000_0000; // key_0
-	  	default : key_data <= 12'b000000000000;
+	  	default : key_data <= 12'b0000_0000_0000;
 	  	endcase
 	  column3 : case (key_row)
 	  	4'b0001 : key_data <= 12'b0000_0000_0100; // key_3
 	  	4'b0010 : key_data <= 12'b0000_0010_0000; // key_6
 	  	4'b0100 : key_data <= 12'b0001_0000_0000; // key_9
 	  	4'b0001 : key_data <= 12'b1000_0000_0000; // key_#
-	  	default : key_data <= 12'b000000000000;
+	  	default : key_data <= 12'b0000_0000_0000;
 	  	endcase
 	  default : key_data <= 12'b0000_0000_0000;
 	endcase

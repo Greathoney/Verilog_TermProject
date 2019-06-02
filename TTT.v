@@ -1,27 +1,36 @@
 module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
-	input clk, rst; //í´ëŸ­, ë¦¬ì…‹
-	input	[3:0]key_row; //keypad ìŠ¤ìº”
-	output [2:0]key_col; //keypad ìŠ¤ìº”
-	output [6:0]seg_txt; //7-segment í•œ ìë¦¬ì— ëŒ€í•´ ë¬¸ì í‘œí˜„
-  output [7:0]seg_com; //7-segment ìœ„ì¹˜ ê²°ì •
-  output [13:0] dot_col; //dot maxtrix ì •ë³´
-  output [9:0] dot_row; //dot maxtrix ì •ë³´
+	input clk, rst; //Å¬·°, ¸®¼Â
+	input	[3:0]key_row; //keypad ½ºÄµ
+	output [2:0]key_col; //keypad ½ºÄµ
+	output [6:0]seg_txt; //7-segment ÇÑ ÀÚ¸®¿¡ ´ëÇØ ¹®ÀÚ Ç¥Çö
+  output [7:0]seg_com; //7-segment À§Ä¡ °áÁ¤
+  output [13:0] dot_col; //dot maxtrix Á¤º¸
+  output [9:0] dot_row; //dot maxtrix Á¤º¸
 
-  reg [11:0]key_data; //key_row, key_colì„ ë°”íƒ•ìœ¼ë¡œ ê°’ ê²°ì •
-  reg IsItMain = 1; //ì´ˆê¸°ìƒíƒœ(1)ì¸ì§€, ê²Œì„ìƒíƒœ(0)ì¸ì§€ í‘œí˜„, 1ë¡œ ì´ˆê¸°í™”
-  reg IsItRight = 0; //ë³´ë“œíŒì´ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ê°”ëŠ”ì§€(1) ì•„ë‹Œì§€(0) í™•ì¸, 0ìœ¼ë¡œ ì´ˆê¸°í™”
-  reg IsTurnO = 0; //Oì˜ ì°¨ë¡€ì¸ì§€(1) Xì˜ ì°¨ë¡€ì¸ì§€(0) í™•ì¸, 0ìœ¼ë¡œ ì´ˆê¸°í™”
-  reg [18:0] board = 2'b00_00_00_00_00_00_00_00_00; //ë³´ë“œì— ì–´ë–¤ ëŒì´ ë†“ì—¬ìˆëŠ”ì§€ í™•ì¸ 0: ì—†ìŒ, 1: XëŒ, 2: OëŒ
+  reg [11:0]key_data; //key_row, key_colÀ» ¹ÙÅÁÀ¸·Î °ª °áÁ¤
+  reg IsItMain = 1; //ÃÊ±â»óÅÂ(1)ÀÎÁö, °ÔÀÓ»óÅÂ(0)ÀÎÁö Ç¥Çö, 1·Î ÃÊ±âÈ­
+  reg IsItRight = 0; //º¸µåÆÇÀÌ ¿À¸¥ÂÊÀ¸·Î °¬´ÂÁö(1) ¾Æ´ÑÁö(0) È®ÀÎ, 0À¸·Î ÃÊ±âÈ­
+  reg IsTurnO = 0; //OÀÇ Â÷·ÊÀÎÁö(1) XÀÇ Â÷·ÊÀÎÁö(0) È®ÀÎ, 0À¸·Î ÃÊ±âÈ­
+  reg [18:0] board = 2'b00_00_00_00_00_00_00_00_00; //º¸µå¿¡ ¾î¶² µ¹ÀÌ ³õ¿©ÀÖ´ÂÁö È®ÀÎ 0: ¾øÀ½, 1: Xµ¹, 2: Oµ¹
 
-	always @(negedge rst) begin //reset í•  ìˆ˜ ìˆëŠ” ë¶€ë¶„
+	always @(posedge rst) begin //reset ÇÒ ¼ö ÀÖ´Â ºÎºĞ
 		IsItMain <= 1;
 		IsItRight <= 0;
 		IsTurnO <= 0;
-		board = 2'b00_00_00_00_00_00_00_00_00;
+		board <= 2'b00_00_00_00_00_00_00_00_00;
 	end
 
-  keypad_scan U1(clk, rst, key_col, key_row, key_data); //í‚¤íŒ¨ë“œ ìŠ¤ìº”í•˜ê¸°, key_dataë¥¼ ë°›ì•„ì˜´
-  mainState U2(clk, key_data, IsItMain, seg_txt, seg_com); //mainìƒíƒœì—ì„œ ì…ë ¥ì„ ë°›ëŠ” ëª¨ë“ˆ
-  //ë” ë§ì€ ê²ƒë“¤...
+  keypad_scan U1(clk, rst, key_col, key_row, key_data); //Å°ÆĞµå ½ºÄµÇÏ±â, key_data¸¦ ¹Ş¾Æ¿È
+	//´©¸£Áö ¾ÊÀ»¶§´Â key_data = 12'b0000_0000_0000 ´©¸£´Â µ¿¾È ¾î´À ¼ıÀÚ°¡ 1·Î º¯ÇÔ
+
+  mainState U2(clk, key_data, IsItMain, seg_txt, seg_com); //main(=1)»óÅÂ¿¡¼­ ÀÔ·Âµµ ¹Ş°í Ãâ·Âµµ ÇÏ´Â ¸ğµâ
+	//main == 0 ÀÌ¸é ÇÊ¿ä¾ø¾îÁø´Ù
+
+	gameState U3(clk, key_data, IsItMain, seg_txt, seg_com); //main(=0)»óÅÂ°¡ ¾Æ´Ñ °ÔÀÓ»óÅÂ¿¡¼­ ÀÔ·Âµµ ¹Ş°í Ãâ·Âµµ ÇÏ´Â ¸ğµâ
+
+  judge U4(); //board µ¥ÀÌÅÍ°¡ ¹Ù²î´Â ½ÃÁ¡¿¡ ½ÂÆĞ°¡ °¥¸®´ÂÁö º¾´Ï´Ù. °¥¸± °æ¿ì ½ÂÀÚ¸¦ Ç¥½ÃÇÏ°Ô µË´Ï´Ù.
+
+	dot_display U5(); //board µ¥ÀÌÅÍ¸¦ ¹ÙÅÁÀ¸·Î dot display¿¡ ¶ç¿ï ¼ö ÀÖ°Ô ÇÕ´Ï´Ù.
+	
 
 endmodule
