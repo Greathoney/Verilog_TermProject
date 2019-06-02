@@ -6,7 +6,7 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 	input [17:0] board;
 	output [13:0] dot_col;
 	output [9:0] dot_row;
-	reg [1:0] board [8:0];
+	reg [17:0] board;
 	reg [13:0] dot_col;
 	reg [9:0] dot_row;
 	reg [3:0] cnt_row, cnt_fra;
@@ -82,10 +82,14 @@ module dot_display(freq, rst, board, dot_col, dot_row);
     // dot matrix display의 한 행의 값을 반환하는 함수
 	function [13:0] rom1;
 		input [3:0] row;
-		input [1:0] b [8:0]; // [1:0] board [2:0][2:0]
+		input [17:0] board;
+		reg [1:0] iter;
 
 		begin
-			rom1 = {3'b'000, fun(row, b[6+row/4]), 1'b0, fun(row, b[3+row/4]), 1'b0, fun(row, b[row/4])};
+			iter = 2*(row/4);
+			rom1 = {3'b000, fun(row, board[5-iter:4-iter]),
+					1'b0, fun(row, board[11-iter:10-iter]),
+					1'b0, fun(row, board[17-iter:16-iter])};
 		end
 
 
