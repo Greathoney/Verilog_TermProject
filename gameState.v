@@ -1,4 +1,4 @@
-module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row);
+module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row);
 //게임상태에서의 환경을 구축합니다.
 //gameState에서 해야할 일
 /*
@@ -8,8 +8,8 @@ module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board, seg_txt, se
 
   	input clk;
   	input [3:0]key_data;
-  	input IsItMain;
-  	inout IsItRight;
+  	input IsMain;
+  	inout IsRight;
   	inout IsTurnO;
   	inout [18:0] board;
     reg [18:0] board;

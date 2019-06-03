@@ -8,8 +8,8 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
   output [9:0] dot_row; //dot maxtrix 정보
 
   reg [3:0]key_data; //key_row, key_col을 바탕으로 값 결정
-  reg IsItMain = 1; //초기상태(1)인지, 게임상태(0)인지 표현, 1로 초기화
-  reg IsItRight = 0; //보드판이 오른쪽으로 갔는지(1) 아닌지(0) 확인, 0으로 초기화
+  reg IsMain = 1; //초기상태(1)인지, 게임상태(0)인지 표현, 1로 초기화
+  reg IsRight = 0; //보드판이 오른쪽으로 갔는지(1) 아닌지(0) 확인, 0으로 초기화
   reg IsTurnO = 0; //O의 차례인지(1) X의 차례인지(0) 확인, 0으로 초기화
   reg [18:0] board = 18'b00_00_00_00_00_00_00_00_00; //보드에 어떤 돌이 놓여있는지 확인 0: 없음, 1: X돌, 2: O돌
 
@@ -23,10 +23,10 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
   keypad_scan U1(clk, rst, key_col, key_row, key_data); //키패드 스캔하기, key_data를 받아옴
 	//누르지 않을때는 key_data = 12'b0000_0000_0000 누르는 동안 어느 숫자가 1로 변함
 
-  mainState U2(clk, key_data, IsItMain, seg_txt, seg_com); //main(=1)상태에서 입력도 받고 출력도 하는 모듈
+  mainState U2(clk, key_data, IsMain, seg_txt, seg_com); //main(=1)상태에서 입력도 받고 출력도 하는 모듈
 	//main == 0 이면 필요없어진다
 
-	gameState U3(clk, key_data, IsItMain, seg_txt, seg_com); //main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
+	gameState U3(clk, key_data, IsMain, seg_txt, seg_com); //main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
 
 	dot_display U5(); //board 데이터를 바탕으로 dot display에 띄울 수 있게 합니다.
 
