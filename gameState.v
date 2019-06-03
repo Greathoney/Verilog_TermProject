@@ -1,9 +1,9 @@
-module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row);
-//°ÔÀÓ»óÅÂ¿¡¼­ÀÇ È¯°æÀ» ±¸ÃàÇÕ´Ï´Ù.
-//gameState¿¡¼­ ÇØ¾ßÇÒ ÀÏ
+module mainState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row);
+//ê²Œì„ìƒíƒœì—ì„œì˜ í™˜ê²½ì„ êµ¬ì¶•í•©ë‹ˆë‹¤.
+//gameStateì—ì„œ í•´ì•¼í•  ì¼
 /*
-1. key_data¸¦ ±â¹İÀ¸·Î board data¸¦ ¼öÁ¤ÇÒ ¼ö ÀÖ¾î¾ß ÇÔ.
-2. ¼ø¼­ÁøÇà»óÈ²¿¡ µû¶ó 7-segment¿¡ P1, P2¸¦ ¶ç¿ö¾ß ÇÔ.
+1. key_dataë¥¼ ê¸°ë°˜ìœ¼ë¡œ board dataë¥¼ ìˆ˜ì •í•  ìˆ˜ ìˆì–´ì•¼ í•¨.
+2. ìˆœì„œì§„í–‰ìƒí™©ì— ë”°ë¼ 7-segmentì— P1, P2ë¥¼ ë„ì›Œì•¼ í•¨.
 */
 
   	input clk;
@@ -12,38 +12,62 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
   	inout IsRight;
   	inout IsTurnO;
   	inout [18:0] board;
-    reg [18:0] board;
-    reg clk1;
+	output [6:0] seg_txt;
+	output [7:0] seg_com;
+	output dot_col;
+	output dot_row;
+	reg [20:0] clk_count;
+	reg [6:0] seg_txt;
+	reg [7:0] seg_com;
+	reg [3:0] sel_seg = 4'b0000;
+	reg clk1;
+	reg [17:0] board;
 
-  	always @(posedge clk) begin // clk1 ¼³°è
+  	always @(posedge clk) begin // clk1 ì„¤ê³„
   		if (IsMain == 1) begin
-  	    if (clk_count >= 24999) begin
-  	      clk_count <= 0;
+  	  	  if (clk_count >= 24999) begin
+  	      	clk_count <= 0;
   	     	clk1 <= 1;
-  	    end
+  	  	  end
   	    else begin
   	      clk_count <= clk_count + 1;
   	      clk1 <= 0;
   	    end
-    	end
+    end
+	end
 
-      //±è¸íÁö ºÎºĞ
+	always @(posedge clk1) begin
+		if(sel_seg == 1) sel_seg <= 0;
+		else sel_seg <= sel_seg + 1;
+	end
+
   	always @(IsTurnO) begin
-  		if (IsTurnO == 1)
-  			//7-segment¿¡ P2¸¦ Ç¥½ÃÇÏ°Ô µÈ´Ù.
-  		else
-  		  //7-segment¿¡ P1À» Ç¥½ÃÇÏ°Ô µÈ´Ù.
+  		if (IsTurnO == 1) begin
+  			//7-segmentì— P2ë¥¼ í‘œì‹œí•˜ê²Œ ëœë‹¤.
+			case(sel_seg)
+				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
+				1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1101101; end //2 => abdeg
+			endcase
+		end
+
+  		else begin
+  		  //7-segmentì— P1ì„ í‘œì‹œí•˜ê²Œ ëœë‹¤.
+			case(sel_seg)
+				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
+				1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
+			endcase
+		end
+	end
 
 
   	always @(posedge key_data) begin
         board[18 - 2 * key_data + IsTurnO] = 1;
-  		endcase
   	end
 
-		always @(board) begin
-		//3¸ñÀ» ÆÇº°ÇÏ´Â ¾Ë°í¸®Áò
-		//IsTurnO¸¦ ÀÌ¿ëÇÑ´Ù.
+  		always @(board) begin
+  		//3ëª©ì„ íŒë³„í•˜ëŠ” ì•Œê³ ë¦¬ì¦˜
+  		//IsTurnOë¥¼ ì´ìš©í•œë‹¤.
 
-		//½ÂÆĞ°¡ ³ª¿À¸é ±× µ¥ÀÌÅÍ¸¦ °¡Áö°í ´Ù¸¥ ¸ğµâ¿¡¼­ Ãâ·Â
-		end
+  		//ìŠ¹íŒ¨ê°€ ë‚˜ì˜¤ë©´ ê·¸ ë°ì´í„°ë¥¼ ê°€ì§€ê³  ë‹¤ë¥¸ ëª¨ë“ˆì—ì„œ ì¶œë ¥
+  		end
   endmodule
