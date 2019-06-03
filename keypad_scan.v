@@ -8,8 +8,8 @@ module keypad_scan(clk, rst, key_col, key_row, key_data);
 	input 	clk, rst;
 	input	[3:0] 	key_row;
 	output	[2:0]	key_col;
-	output	[11:0]	key_data;
-	reg	[11:0]	key_data;
+	output	[3:0]	key_data;
+	reg	[3:0]	key_data;
 	reg	[2:0]	state;
 	reg [13:0]  counts;
 	reg clk1;
@@ -48,27 +48,27 @@ module keypad_scan(clk, rst, key_col, key_row, key_data);
 	always @ (posedge clk1) begin
 	case (state)
 	  column1 : case (key_row)
-	  	4'b0001 : key_data <= 12'b0000_0000_0001; // key_1
-	  	4'b0010 : key_data <= 12'b0000_0000_1000; // key_4
-	  	4'b0100 : key_data <= 12'b0000_0100_0000; // key_7
-	  	4'b0000 : key_data <= 12'b0010_0000_0000; // key_*
-	  	default : key_data <= 12'b0000_0000_0000;
+	  	4'b0001 : key_data <= 1; // key_1
+	  	4'b0010 : key_data <= 4; // key_4
+	  	4'b0100 : key_data <= 7; // key_7
+	  	4'b0000 : key_data <= 10; // key_*
+	  	default : key_data <= 0;
 	  	endcase
 	  column2 : case (key_row)
-	  	4'b0001 : key_data <= 12'b0000_0000_0010; // key_2
-	  	4'b0010 : key_data <= 12'b0000_0001_0000; // key_5
-	  	4'b0100 : key_data <= 12'b0000_1000_0000; // key_8
-	  	4'b0001 : key_data <= 12'b0100_0000_0000; // key_0
-	  	default : key_data <= 12'b0000_0000_0000;
+	  	4'b0001 : key_data <= 2; // key_2
+	  	4'b0010 : key_data <= 5; // key_5
+	  	4'b0100 : key_data <= 8; // key_8
+	  	4'b0001 : key_data <= 11; // key_0
+	  	default : key_data <= 0;
 	  	endcase
 	  column3 : case (key_row)
-	  	4'b0001 : key_data <= 12'b0000_0000_0100; // key_3
-	  	4'b0010 : key_data <= 12'b0000_0010_0000; // key_6
-	  	4'b0100 : key_data <= 12'b0001_0000_0000; // key_9
-	  	4'b0001 : key_data <= 12'b1000_0000_0000; // key_#
-	  	default : key_data <= 12'b0000_0000_0000;
+	  	4'b0001 : key_data <= 3; // key_3
+	  	4'b0010 : key_data <= 6; // key_6
+	  	4'b0100 : key_data <= 9; // key_9
+	  	4'b0001 : key_data <= 12; // key_#
+	  	default : key_data <= 0;
 	  	endcase
-	  default : key_data <= 12'b0000_0000_0000;
+	  default : key_data <= 0;
 	endcase
 	end
 endmodule
