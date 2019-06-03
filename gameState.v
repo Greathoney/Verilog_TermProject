@@ -1,4 +1,4 @@
-module gaimState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row, result);
+module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row, result);
 //게임상태에서의 환경을 구축합니다.
 //gameState에서 해야할 일
 /*
@@ -107,7 +107,7 @@ module gaimState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
 
     else begin result = 2'b00; end
 
-  
+
 	//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
 	end
 endmodule
