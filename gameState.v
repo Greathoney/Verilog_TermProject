@@ -1,4 +1,4 @@
-module mainState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row);
+module gaimState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row);
 //게임상태에서의 환경을 구축합니다.
 //gameState에서 해야할 일
 /*
