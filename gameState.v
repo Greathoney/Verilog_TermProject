@@ -43,6 +43,7 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 		else sel_seg <= sel_seg + 1;
 	end
 
+<<<<<<< HEAD
 	always @(IsTurnO) begin
 		if (IsTurnO == 1) begin
 			//7-segment에 P2를 표시하게 된다.
@@ -53,6 +54,19 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
     end
   	else begin
   		  //7-segment에 P1을 표시하게 된다.
+=======
+  	always @(IsTurnO) begin
+  		if (IsTurnO == 1) begin
+  			//7-segment에 P2를 표시하게 된다.
+			case(sel_seg)
+				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
+				1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1101101; end //2 => abdeg
+			endcase
+		end
+
+  		else begin
+  		  //7-segment에 P1을 
+>>>>>>> 0de98acb514cc92b61b750bce47e9c19023deaf9
 			case(sel_seg)
 				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
 				1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
