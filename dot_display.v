@@ -10,9 +10,9 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 	reg [17:0] board;
 	reg [13:0] dot_col;
 	reg [9:0] dot_row;
-	reg [3:0] cnt_row;
+	reg [3:0] cnt_row, cnt_fra;
 	reg [7:0] cnt_col;
-	reg clk_col;
+	reg clk_col, clk_fra;
 	reg clk;
 	reg [14:0] count;
 
@@ -46,6 +46,7 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 	end
 
 	// clk_col에 동기하여 cnt_col을 0~13까지 카운트
+	// 카운트가 끝날 때마다 한 번의 clk_fra 신호 생성
 	always @ (posedge clk_col or posedge rst) begin
 		if (rst) begin
 			cnt_col <= 0;
@@ -53,15 +54,26 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 		else begin
 			if (cnt_col == 255) begin
 				cnt_col <= 0;
+				clk_fra <= 1;
 			end
 			else begin
 				cnt_col <= cnt_col + 1;
+				clk_fra <= 0;
 			end
 		end
 	end
 
-	// cnt_row+IsRight를 주소로 하는 롬의 데이터를 dot_col로 출력
-	always @ () begin
+	// clk_fra에 동기하여 cnt_fra를 카운트
+	always @ (posedge clk_fra or posedge rst) begin
+		if (rst) cnt_fra <= 0;
+		else begin
+			if (cnt_fra == 9) cnt <= 0;
+			else cnt_fra <= cnt_fra + 1;
+		end
+	end
+
+	// cnt_row+IsRight, cnt_fra를 주소로 하는 롬의 데이터를 dot_col로 출력
+	always @ (cnt_fra) begin
 		dot_col = rom1(cnt_row+IsRight, board);
 	end
 
