@@ -19,6 +19,7 @@ module is_three_in_a_row(board, result, isTurnO);
 
         else result = 0;
       end
+
       else begin
       // OÀÇ »ï¸ñ ÆÇº°
         if (board[17] && board[15] && board[13]) result = 1;
