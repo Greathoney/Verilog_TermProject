@@ -15,14 +15,16 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 	reg clk_col, clk_fra;
 	reg clk;
 	reg [14:0] count;
-	
 
+	// 25MHz 인 Entry II의 클록을 1KHz의 클록으로 분주한다.
 	always @ (posedge freq or posedge rst) begin
 		if (rst) begin count <= 0; clk <= 1; end
 		else if (count >= 12499) begin count <= 0; clk <= ~clk; end
 		else count <= count + 1;
 	end
 
+	// 클록에 동기하여 cnt_row를 카운트하여 11개의 row 스캔 신호를 만든다.
+	// row 스캔이 끝날 때마다 한번의 clk_col 신호를 생성한다.
 	always @ (posedge clk or posedge rst) begin
 		if (rst) begin
 			dot_row <= 1;
@@ -43,18 +45,26 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 		end
 	end
 
+	// clk_col에 동기하여 cnt_col을 0~13까지 카운트
+	// 카운트가 끝날 때마다 한 번의 clk_fra 신호 생성
+
 	always @ (posedge clk_col or posedge rst) begin
 		if (rst) begin
 			cnt_col <= 0;
 		end
 		else begin
 			if (cnt_col == 255) begin
+				cnt_col <= 0;
+				clk_fra <= 1;
+			end
+			else begin
 				cnt_col <= cnt_col + 1;
 				clk_fra <= 0;
 			end
 		end
 	end
 
+	// clk_fra에 동기하여 cnt_fra를 카운트
 	always @ (posedge clk_fra or posedge rst) begin
 		if (rst) cnt_fra <= 0;
 		else begin
@@ -63,6 +73,7 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 		end
 	end
 
+	// cnt_row, cnt_fra를 주소로 하는 롬의 데이터를 dot_col로 출력
 	always @ (cnt_fra) begin
 		case (cnt_fra)
 			0: dot_col = rom1(cnt_row+IsRight, board);
