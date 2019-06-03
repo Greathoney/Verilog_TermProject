@@ -1,4 +1,4 @@
-module gaimState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row, result);
+module gaimState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row, result);
 //게임상태에서의 환경을 구축합니다.
 //gameState에서 해야할 일
 /*
@@ -9,7 +9,6 @@ module gaimState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
   	input clk;
   	input [3:0]key_data;
   	input IsMain;
-  	inout IsRight;
   	inout IsTurnO;
   	inout [18:0] board;
     inout [1:0] result;
