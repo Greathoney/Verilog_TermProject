@@ -25,7 +25,7 @@ module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board, seg_txt, se
   	    end
     	end
 
-
+      //김명지 부분
   	always @(IsTurnO) begin
   		if (IsTurnO == 1)
   			//7-segment에 P2를 표시하게 된다.
