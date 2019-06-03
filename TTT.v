@@ -28,7 +28,7 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 
 	gameState U3(clk, key_data, IsMain, seg_txt, seg_com); //main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
 
-	dot_display U5(); //board 데이터를 바탕으로 dot display에 띄울 수 있게 합니다.
+	dot_display U4(clk, rst, board, dot_col, dot_row); //board 데이터를 바탕으로 dot display에 띄울 수 있게 합니다.
 
 
 endmodule
