@@ -5,6 +5,7 @@ module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board, seg_txt, se
 1. key_data를 기반으로 board data를 수정할 수 있어야 함.
 2. 순서진행상황에 따라 7-segment에 P1, P2를 띄워야 함.
 */
+
   	input clk;
   	input [3:0]key_data;
   	input IsItMain;
@@ -32,20 +33,8 @@ module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board, seg_txt, se
   		  //7-segment에 P1을 표시하게 된다.
 
 
-  	always @(key_data) begin
-  		case(key_data)
-  			1: if (board[1:0] == 2'b00) IsTurnO ? board = 18'b10_00_00_00_00_00_00_00_00  : board[1:0] = 2'b01; //else... 불가능하다고 말해주는 트리거
-  			2:
-            3:
-            4:
-            5:
-            6:
-            7:
-            8:
-            9:
-            10:
-            11:
-            12:
+  	always @(posedge key_data) begin
+        board[18 - 2 * key_data + IsTurnO] = 1;
   		endcase
   	end
 
