@@ -7,7 +7,7 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 */
 
   input clk;
-	input [3:0]key_data;
+	input [3:0] key_data;
 	input IsMain;
 	inout IsRight;
 	inout IsTurnO;
@@ -67,9 +67,10 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 	end
 
 	always @(board) begin
+  IsTurnO = ~IsTurnO
 	//3목을 판별하는 알고리즘
 	//IsTurnO를 이용한다.
-    if (isTurnO) begin
+    if (IsTurnO) begin
       // X의 삼목 판별
       if (board[16] && board[14] && board[12]) result = 2'b01;
       else if (board[10] && board[8] && board[6]) result = 2'b01;
