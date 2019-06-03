@@ -64,15 +64,15 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 	always @ (cnt_fra) begin
 		case (cnt_fra)
 			0: dot_col = rom1(cnt_row+IsRight, board);
-			1: dot_col = rom1(cnt_row, board);
-			2: dot_col = rom1(cnt_row, board);
-			3: dot_col = rom1(cnt_row, board);
-			4: dot_col = rom1(cnt_row, board);
-			5: dot_col = rom1(cnt_row, board);
-			6: dot_col = rom1(cnt_row, board);
-			7: dot_col = rom1(cnt_row, board);
-			8: dot_col = rom1(cnt_row, board);
-			9: dot_col = rom1(cnt_row, board);
+			1: dot_col = rom1(cnt_row+IsRight, board);
+			2: dot_col = rom1(cnt_row+IsRight, board);
+			3: dot_col = rom1(cnt_row+IsRight, board);
+			4: dot_col = rom1(cnt_row+IsRight, board);
+			5: dot_col = rom1(cnt_row+IsRight, board);
+			6: dot_col = rom1(cnt_row+IsRight, board);
+			9: dot_col = rom1(cnt_row+IsRight, board);
+			7: dot_col = rom1(cnt_row+IsRight, board);
+			8: dot_col = rom1(cnt_row+IsRight, board);
 		default: dot_col = 0;
 		endcase
 	end
