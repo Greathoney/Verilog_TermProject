@@ -6,13 +6,13 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 2. 순서진행상황에 따라 7-segment에 P1, P2를 띄워야 함.
 */
 
-  	input clk;
-  	input [3:0]key_data;
-  	input IsMain;
-  	inout IsRight;
-  	inout IsTurnO;
-  	inout [18:0] board;
-    inout [1:0] result;
+  input clk;
+  input [3:0]key_data;
+  input IsMain;
+  inout IsRight;
+  inout IsTurnO;
+  inout [18:0] board;
+  inout [1:0] result;
 	output [6:0] seg_txt;
 	output [7:0] seg_com;
 	output dot_col;
@@ -25,16 +25,16 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 	reg [17:0] board;
   reg result; // 00 : 진행중   01 : X승   10 : O승   11 : 무승부
 
-  	always @(posedge clk) begin // clk1 설계
-  		if (IsMain == 1) begin
-  	  	  if (clk_count >= 24999) begin
-  	      	clk_count <= 0;
-  	     	clk1 <= 1;
-  	  	  end
-  	    else begin
-  	      clk_count <= clk_count + 1;
-  	      clk1 <= 0;
-  	    end
+	always @(posedge clk) begin // clk1 설계
+		if (IsMain == 1) begin
+  	  if (clk_count >= 24999) begin
+      	clk_count <= 0;
+	     	clk1 <= 1;
+  	  end
+	    else begin
+        clk_count <= clk_count + 1;
+  	    clk1 <= 0;
+      end
     end
 	end
 
@@ -43,16 +43,15 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 		else sel_seg <= sel_seg + 1;
 	end
 
-  	always @(IsTurnO) begin
-  		if (IsTurnO == 1) begin
-  			//7-segment에 P2를 표시하게 된다.
-			case(sel_seg)
-				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
-				1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1101101; end //2 => abdeg
-			endcase
-		end
-
-  		else begin
+	always @(IsTurnO) begin
+		if (IsTurnO == 1) begin
+			//7-segment에 P2를 표시하게 된다.
+    	case(sel_seg)
+    		0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
+    		1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1101101; end //2 => abdeg
+    	endcase
+    end
+  	else begin
   		  //7-segment에 P1을 표시하게 된다.
 			case(sel_seg)
 				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
