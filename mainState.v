@@ -1,5 +1,5 @@
 module mainState(clk, key_data, IsMain, seg_txt, seg_com);
-  //¸ŞÀÎ¸Ş´º¿¡¼­ÀÇ »óÅÂ¸¦ Ç¥½ÃÇÕ´Ï´Ù. IsMain = 1ÀÏ¶§¸¸ È°¼ºÈ­, 0À¸·Î ¹Ù²ğ¼ö ÀÖ´Â Á¶°Ç °®Ãã
+  //ë©”ì¸ë©”ë‰´ì—ì„œì˜ ìƒíƒœë¥¼ í‘œì‹œí•©ë‹ˆë‹¤. IsMain = 1ì¼ë•Œë§Œ í™œì„±í™”, 0ìœ¼ë¡œ ë°”ë€”ìˆ˜ ìˆëŠ” ì¡°ê±´ ê°–ì¶¤
   input [11:0] key_data;
 	input clk;
   inout IsMain;
@@ -8,23 +8,24 @@ module mainState(clk, key_data, IsMain, seg_txt, seg_com);
   reg [20:0]clk_count;
 	reg [7:0] seg_com;
 	reg [6:0] seg_txt;
-	reg IsItMain;
+	reg IsMain;
   reg [3:0] sel_seg = 4'b0000;
   reg clk1;
 
-  always @(posedge clk) begin // clk1 ¼³°è
+  always @(posedge clk) begin // clk1 ì„¤ê³„
 		if (IsMain == 1) begin
-	    if (clk_count >= 24999) begin
-	      clk_count <= 0;
-	     	clk1 <= 1;
-	    end
+			if (clk_count >= 24999) begin
+	      		clk_count <= 0;
+	     		clk1 <= 1;
+	   		end
 	    else begin
 	      clk_count <= clk_count + 1;
 	      clk1 <= 0;
 	    end
   	end
+	end
 
-		always @(posedge clk1) begin  //Å° 1¹øÀÌ ÀÔ·ÂµÇ¸é MainÀÌ Ç®¸®°í °ÔÀÓ¸ğµå·Î ÁøÀÔÇÏµµ·Ï ¼³°è
+	always @(posedge clk1) begin  //í‚¤ 1ë²ˆì´ ì…ë ¥ë˜ë©´ Mainì´ í’€ë¦¬ê³  ê²Œì„ëª¨ë“œë¡œ ì§„ì…í•˜ë„ë¡ ì„¤ê³„
 			if (IsMain == 1) begin
 				if (key_data == 12'b0000_0000_0001) begin
 	    		IsMain <= 0;
@@ -32,14 +33,14 @@ module mainState(clk, key_data, IsMain, seg_txt, seg_com);
       end
 	  end
 
-  always @(posedge clk1) begin //clk1À» ±â¹İÀ¸·Î sel_seg ¼³°è
+  always @(posedge clk1) begin //clk1ì„ ê¸°ë°˜ìœ¼ë¡œ sel_seg ì„¤ê³„
 		if (IsMain == 1) begin
     	if (sel_seg == 7) sel_seg <= 0;
     		else sel_seg <= sel_seg + 1;
 			end
 		end
 
-  always @(sel_seg) //sel_segÀ» ±â¹İÀ¸·Î 7-segment¿¡ Ç¥½Ã
+  always @(sel_seg) //sel_segì„ ê¸°ë°˜ìœ¼ë¡œ 7-segmentì— í‘œì‹œ
 		if (IsMain == 1) begin
 	    case(sel_seg)
 	      0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
