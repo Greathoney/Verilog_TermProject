@@ -67,7 +67,7 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 	end
 
 	always @(board) begin
-  IsTurnO = ~IsTurnO
+  IsTurnO = ~IsTurnO;
 	//3목을 판별하는 알고리즘
 	//IsTurnO를 이용한다.
     if (IsTurnO) begin
