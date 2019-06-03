@@ -14,8 +14,8 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
   reg [18:0] board = 18'b00_00_00_00_00_00_00_00_00; //보드에 어떤 돌이 놓여있는지 확인 0: 없음, 1: X돌, 2: O돌
 
 	always @(posedge rst) begin //reset 할 수 있는 부분
-		IsItMain <= 1;
-		IsItRight <= 0;
+		IsMain <= 1;
+		IsRight <= 0;
 		IsTurnO <= 0;
 		board <= 2'b00_00_00_00_00_00_00_00_00;
 	end
@@ -27,8 +27,6 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 	//main == 0 이면 필요없어진다
 
 	gameState U3(clk, key_data, IsItMain, seg_txt, seg_com); //main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
-
-  judge U4(); //board 데이터가 바뀌는 시점에 승패가 갈리는지 봅니다. 갈릴 경우 승자를 표시하게 됩니다.
 
 	dot_display U5(); //board 데이터를 바탕으로 dot display에 띄울 수 있게 합니다.
 

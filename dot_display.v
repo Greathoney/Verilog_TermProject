@@ -63,7 +63,7 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 
 	always @ (cnt_fra) begin
 		case (cnt_fra)
-			0: dot_col = rom1(cnt_row, board);
+			0: dot_col = rom1(cnt_row+IsRight, board);
 			1: dot_col = rom1(cnt_row, board);
 			2: dot_col = rom1(cnt_row, board);
 			3: dot_col = rom1(cnt_row, board);
