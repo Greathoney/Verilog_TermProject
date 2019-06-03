@@ -1,9 +1,10 @@
 
-module dot_display(freq, rst, board, dot_col, dot_row);
+module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 
 	input freq;
 	input rst;
 	input [17:0] board;
+	input IsRight;
 	output [13:0] dot_col;
 	output [9:0] dot_row;
 	reg [17:0] board;
@@ -14,6 +15,7 @@ module dot_display(freq, rst, board, dot_col, dot_row);
 	reg clk_col, clk_fra;
 	reg clk;
 	reg [14:0] count;
+	
 
 	always @ (posedge freq or posedge rst) begin
 		if (rst) begin count <= 0; clk <= 1; end
