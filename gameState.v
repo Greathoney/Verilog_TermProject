@@ -61,7 +61,7 @@ module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 		end
 	end
 
-
+  // key data를 board로
 	always @(posedge key_data) begin
       board[18 - 2 * key_data + IsTurnO] = 1;
 	end
