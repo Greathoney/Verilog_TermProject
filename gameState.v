@@ -12,6 +12,8 @@ module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board, seg_txt, se
   	inout IsItRight;
   	inout IsTurnO;
   	inout [18:0] board;
+    reg [18:0] board;
+    reg clk1;
 
   	always @(posedge clk) begin // clk1 설계
   		if (IsMain == 1) begin
@@ -38,10 +40,10 @@ module gameState(clk, key_data, IsItMain, IsItRight, IsTurnO, board, seg_txt, se
   		endcase
   	end
 
-		always @(board) begin
-		//3목을 판별하는 알고리즘
-		//IsTurnO를 이용한다.
+  		always @(board) begin
+  		//3목을 판별하는 알고리즘
+  		//IsTurnO를 이용한다.
 
-		//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
-		end
+  		//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
+  		end
   endmodule
