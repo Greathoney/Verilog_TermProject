@@ -1,4 +1,4 @@
-module mainState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row);
+module gameState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row, result);
 //게임상태에서의 환경을 구축합니다.
 //gameState에서 해야할 일
 /*
@@ -12,6 +12,7 @@ module mainState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
   	inout IsRight;
   	inout IsTurnO;
   	inout [18:0] board;
+    inout [1:0] result;
 	output [6:0] seg_txt;
 	output [7:0] seg_com;
 	output dot_col;
@@ -22,6 +23,7 @@ module mainState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
 	reg [3:0] sel_seg = 4'b0000;
 	reg clk1;
 	reg [17:0] board;
+  reg result; // 00 : 진행중   01 : X승   10 : O승   11 : 무승부
 
   	always @(posedge clk) begin // clk1 설계
   		if (IsMain == 1) begin
@@ -67,7 +69,35 @@ module mainState(clk, key_data, IsMain, IsRight, IsTurnO, board, seg_txt, seg_co
   		always @(board) begin
   		//3목을 판별하는 알고리즘
   		//IsTurnO를 이용한다.
+        if (isTurnO) begin
+          // X의 삼목 판별
+          if (board[16] && board[14] && board[12]) result = 2'b01;
+          else if (board[10] && board[8] && board[6]) result = 2'b01;
+          else if (board[4] && board[2] && board[0]) result = 2'b01;
 
+          else if (board[16] && board[10] && board[4]) result = 2'b01;
+          else if (board[14] && board[8] && board[2]) result = 2'b01;
+          else if (board[12] && board[6] && board[0]) result = 2'b01;
+
+          else if (board[16] && board[8] && board[0]) result = 2'b01;
+          else if (board[12] && board[8] && board[4]) result = 2'b01;
+
+          else result = 0;
+        end
+        else begin
+          if (board[17] && board[15] && board[13]) result = 2'b10;
+          else if (board[11] && board[9] && board[7]) result = 2'b10;
+          else if (board[5] && board[3] && board[1]) result = 2'b10;
+
+          else if (board[17] && board[11] && board[5]) result = 2'b10;
+          else if (board[15] && board[9] && board[3]) result = 2'b10;
+          else if (board[13] && board[7] && board[1]) result = 2'b10;
+
+          else if (board[17] && board[9] && board[1]) result = 2'b10;
+          else if (board[13] && board[9] && board[5]) result = 2'b10;
+
+          else result = 0;
+        end
   		//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
   		end
   endmodule
