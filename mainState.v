@@ -1,3 +1,5 @@
+//컴파일 완료: 수정시 주석 삭제
+
 module mainState(clk, key_data, IsMain, seg_txt, seg_com);
   //메인메뉴에서의 상태를 표시합니다. IsMain = 1일때만 활성화, 0으로 바뀔수 있는 조건 갖춤
   input [11:0] key_data;
