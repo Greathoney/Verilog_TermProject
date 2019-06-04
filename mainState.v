@@ -2,7 +2,7 @@
 
 module mainState(clk, key_data, IsMain, seg_txt, seg_com);
   //메인메뉴에서의 상태를 표시합니다. IsMain = 1일때만 활성화, 0으로 바뀔수 있는 조건 갖춤
-  input [11:0] key_data;
+  input [3:0] key_data;
 	input clk;
   inout IsMain;
   output [6:0] seg_txt;
@@ -11,7 +11,7 @@ module mainState(clk, key_data, IsMain, seg_txt, seg_com);
 	reg [7:0] seg_com;
 	reg [6:0] seg_txt;
 	reg IsMain;
-  reg [3:0] sel_seg = 4'b0000;
+  reg [3:0] sel_seg;
   reg clk1;
 
   always @(posedge clk) begin // clk1 설계
@@ -29,7 +29,7 @@ module mainState(clk, key_data, IsMain, seg_txt, seg_com);
 
 	always @(posedge clk1) begin  //키 1번이 입력되면 Main이 풀리고 게임모드로 진입하도록 설계
 			if (IsMain == 1) begin
-				if (key_data == 12'b0000_0000_0001) begin
+				if (key_data == 1) begin
 	    		IsMain <= 0;
         end
       end

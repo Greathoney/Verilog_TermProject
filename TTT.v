@@ -17,7 +17,7 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 		IsMain <= 1;
 		IsRight <= 0;
 		IsTurnO <= 0;
-		board <= 2'b00_00_00_00_00_00_00_00_00;
+		board <= 18'b00_00_00_00_00_00_00_00_00;
 	end
 
   keypad_scan U1(clk, rst, key_col, key_row, key_data); //키패드 스캔하기, key_data를 받아옴

@@ -25,7 +25,7 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
   reg result; // 00 : 진행중   01 : X승   10 : O승   11 : 무승부
 
   always @(posedge clk) begin // clk1 설계
-  	if (IsMain == 0) begin
+  	if (IsMain == 0 && result == 0) begin
   	   if (clk_count >= 24999) begin
   	    	clk_count <= 0;
   	    	clk1 <= 1;
@@ -38,12 +38,12 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
 	end
 
 	always @(posedge clk1) begin
-		if(sel_seg == 1) sel_seg <= 0;
+		if(sel_seg == 1 && result == 0) sel_seg <= 0;
 		else sel_seg <= sel_seg + 1;
 	end
 
-  always @(IsTurnO) begin
-    if(IsMain==0)begin
+  always @(sel_seg) begin
+    if(IsMain==0 && result == 0)begin
   	 if (IsTurnO == 1) begin
   		 //7-segment에 P2를 표시하게 된다.
 		   case(sel_seg)
@@ -60,11 +60,33 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
 			endcase
       end
 		end
+  if (result == 3 && IsTurnO) begin
+    case(sel_seg)
+    //P1 lose segment를 띄우게 된다.
+    endcase
+  end
+  else if (result == 3) begin
+    case(sel_seg)
+    //P2 lose를 7segment로 띄우게 된다.
+    endcase
+  end
+
+
 	end
 
   // key data를 board로
 	always @(posedge key_data) begin
-      board[18 - 2 * key_data + IsTurnO] = 1;
+    case (key_data)
+    1: IsTurnO ? board[17] = 1 : board[16] = 1;
+    2: IsTurnO ? board[15] = 1 : board[14] = 1;
+    3: IsTurnO ? board[13] = 1 : board[12] = 1;
+    4: IsTurnO ? board[11] = 1 : board[10] = 1;
+    5: IsTurnO ? board[9] = 1 : board[8] = 1;
+    6: IsTurnO ? board[7] = 1 : board[6] = 1;
+    7: IsTurnO ? board[5] = 1 : board[4] = 1;
+    8: IsTurnO ? board[3] = 1 : board[2] = 1;
+    9: IsTurnO ? board[1] = 1 : board[0] = 1;
+      // board[18 - 2 * key_data + IsTurnO] = 1;
 	end
 
 	always @(board) begin
@@ -106,8 +128,6 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
       end
 
     else begin result = 2'b00; end
-
-
 	//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
 	end
 endmodule
