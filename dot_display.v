@@ -1,5 +1,5 @@
 
-module TTT(freq, rst, board, dot_col, dot_row, IsRight);
+module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 
 	input freq;
 	input rst;
