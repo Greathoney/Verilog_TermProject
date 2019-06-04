@@ -1,18 +1,23 @@
-module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
-	input clk, rst; //Å¬·°, ¸®¼Â
-	input [3:0]key_row; //keypad ½ºÄµ
-	output [2:0]key_col; //keypad ½ºÄµ
-	output [6:0]seg_txt; //7-segment ÇÑ ÀÚ¸®¿¡ ´ëÇØ ¹®ÀÚ Ç¥Çö
-	output [7:0]seg_com; //7-segment À§Ä¡ °áÁ¤
-	output [13:0] dot_col; //dot maxtrix Á¤º¸
-	output [9:0] dot_row; //dot maxtrix Á¤º¸
+module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row, check_IsMain, check_notIsMain);
+	input clk, rst; //í´ëŸ­, ë¦¬ì…‹
+	input [3:0]key_row; //keypad ìŠ¤ìº”
+	output [2:0]key_col; //keypad ìŠ¤ìº”
+	output [6:0]seg_txt; //7-segment í•œ ìë¦¬ì— ëŒ€í•´ ë¬¸ì í‘œí˜„
+	output [7:0]seg_com; //7-segment ìœ„ì¹˜ ê²°ì •
+	output [13:0] dot_col; //dot maxtrix ì •ë³´
+	output [9:0] dot_row; //dot maxtrix ì •ë³´
+	output check_IsMain;
+	output check_notIsMain;
+	output keydata_1;
+	reg keydata_1;
+	input IsMain_dip;
 
-	reg [3:0]key_data; //key_row, key_colÀ» ¹ÙÅÁÀ¸·Î °ª °áÁ¤
-	integer IsMain = 1; //ÃÊ±â»óÅÂ(1)ÀÎÁö, °ÔÀÓ»óÅÂ(0)ÀÎÁö Ç¥Çö, 1·Î ÃÊ±âÈ­
-	reg IsRight = 0; //º¸µåÆÇÀÌ ¿À¸¥ÂÊÀ¸·Î °¬´ÂÁö(1) ¾Æ´ÑÁö(0) È®ÀÎ, 0À¸·Î ÃÊ±âÈ­
-	reg IsTurnO = 0; //OÀÇ Â÷·ÊÀÎÁö(1) XÀÇ Â÷·ÊÀÎÁö(0) È®ÀÎ, 0À¸·Î ÃÊ±âÈ­
-	reg [18:0] board = 18'b00_00_00_00_00_00_00_00_00; //º¸µå¿¡ ¾î¶² µ¹ÀÌ ³õ¿©ÀÖ´ÂÁö È®ÀÎ 0: ¾øÀ½, 1: Xµ¹, 2: Oµ¹
-
+	reg [3:0]key_data; //key_row, key_colì„ ë°”íƒ•ìœ¼ë¡œ ê°’ ê²°ì •
+	integer IsMain = 1; //ì´ˆê¸°ìƒíƒœ(1)ì¸ì§€, ê²Œì„ìƒíƒœ(0)ì¸ì§€ í‘œí˜„, 1ë¡œ ì´ˆê¸°í™”
+	reg IsRight = 0; //ë³´ë“œíŒì´ ì˜¤ë¥¸ìª½ìœ¼ë¡œ ê°”ëŠ”ì§€(1) ì•„ë‹Œì§€(0) í™•ì¸, 0ìœ¼ë¡œ ì´ˆê¸°í™”
+	reg IsTurnO = 0; //Oì˜ ì°¨ë¡€ì¸ì§€(1) Xì˜ ì°¨ë¡€ì¸ì§€(0) í™•ì¸, 0ìœ¼ë¡œ ì´ˆê¸°í™”
+	reg [18:0] board = 18'b00_00_00_00_00_00_00_00_00; //ë³´ë“œì— ì–´ë–¤ ëŒì´ ë†“ì—¬ìˆëŠ”ì§€ í™•ì¸ 0: ì—†ìŒ, 1: XëŒ, 2: OëŒ
+	reg check_IsMain, check_notIsMain;
 	//keypad_scan
 	reg	[2:0] state;
 	reg [13:0] counts;
@@ -30,19 +35,27 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 	reg [6:0] seg_txt;
 	reg [3:0] sel_seg;
 	reg clk2;
+	
+	always @(posedge clk) begin
+		if (IsMain == 1) begin check_IsMain <= 1; check_notIsMain <= 0; end
+		else if (IsMain == 0) begin check_IsMain <= 0; check_notIsMain <= 1; end
+		
+		if (key_data == 1) keydata_1 <= 1;
+		else keydata_1 <= 0;
+	end
+		
 
-
-	always @(posedge rst) begin //reset ÇÒ ¼ö ÀÖ´Â ºÎºĞ
-		IsMain <= 0;
+	always @(posedge rst) begin //reset í•  ìˆ˜ ìˆëŠ” ë¶€ë¶„
+	if (1==1) begin
 		IsRight <= 0;
 		IsTurnO <= 0;
-		board <= 18'b00_00_00_00_00_00_00_00_00;
+		board <= 18'b00_00_00_00_00_00_00_00_00; end
 	end
 
 
 	//MODULE KEYPAD_SCAN
-	//Å°ÆĞµå ½ºÄµÇÏ±â, key_data¸¦ ¹Ş¾Æ¿È
-	//´©¸£Áö ¾ÊÀ»¶§´Â key_data = 12'b0000_0000_0000 ´©¸£´Â µ¿¾È ¾î´À ¼ıÀÚ°¡ 1·Î º¯ÇÔ
+	//í‚¤íŒ¨ë“œ ìŠ¤ìº”í•˜ê¸°, key_dataë¥¼ ë°›ì•„ì˜´
+	//ëˆ„ë¥´ì§€ ì•Šì„ë•ŒëŠ” key_data = 12'b0000_0000_0000 ëˆ„ë¥´ëŠ” ë™ì•ˆ ì–´ëŠ ìˆ«ìê°€ 1ë¡œ ë³€í•¨
 	// define state of FSM
 
 	assign key_stop = key_row[0] | key_row[1] | key_row[2] | key_row[3] ;
@@ -82,7 +95,7 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 				4'b0001 : key_data <= 2; // key_2
 				4'b0010 : key_data <= 5; // key_5
 				4'b0100 : key_data <= 8; // key_8
-				4'b1000 : key_data <= 0; // key_0 : ¾Æ¹«ÀÏ ¾ÈÇÔ
+				4'b1000 : key_data <= 0; // key_0 : ì•„ë¬´ì¼ ì•ˆí•¨
 				default : key_data <= 0;
 			endcase
 		  column3 : case (key_row)
@@ -99,14 +112,14 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 
 
 	//Module MainState
-	//main(=1)»óÅÂ¿¡¼­ ÀÔ·Âµµ ¹Ş°í Ãâ·Âµµ ÇÏ´Â ¸ğµâ
-	//main == 0 ÀÌ¸é ÇÊ¿ä¾ø¾îÁø´Ù
+	//main(=1)ìƒíƒœì—ì„œ ì…ë ¥ë„ ë°›ê³  ì¶œë ¥ë„ í•˜ëŠ” ëª¨ë“ˆ
+	//main == 0 ì´ë©´ í•„ìš”ì—†ì–´ì§„ë‹¤
 
-	//ÄÄÆÄÀÏ ¿Ï·á: ¼öÁ¤½Ã ÁÖ¼® »èÁ¦
+	//ì»´íŒŒì¼ ì™„ë£Œ: ìˆ˜ì •ì‹œ ì£¼ì„ ì‚­ì œ
 
-	//¸ŞÀÎ¸Ş´º¿¡¼­ÀÇ »óÅÂ¸¦ Ç¥½ÃÇÕ´Ï´Ù. IsMain = 1ÀÏ¶§¸¸ È°¼ºÈ­, 0À¸·Î ¹Ù²ğ¼ö ÀÖ´Â Á¶°Ç °®Ãã
+	//ë©”ì¸ë©”ë‰´ì—ì„œì˜ ìƒíƒœë¥¼ í‘œì‹œí•©ë‹ˆë‹¤. IsMain = 1ì¼ë•Œë§Œ í™œì„±í™”, 0ìœ¼ë¡œ ë°”ë€”ìˆ˜ ìˆëŠ” ì¡°ê±´ ê°–ì¶¤
 
-	always @(posedge clk) begin // clk2 ¼³°è
+	always @(posedge clk) begin // clk2 ì„¤ê³„
 		if (IsMain == 1) begin
 			if (clk_count >= 24999) begin
 				clk_count <= 0;
@@ -119,22 +132,22 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 		end
 	end
 
-	always @(posedge clk2) begin  //Å° 1¹øÀÌ ÀÔ·ÂµÇ¸é MainÀÌ Ç®¸®°í °ÔÀÓ¸ğµå·Î ÁøÀÔÇÏµµ·Ï ¼³°è
-		if (IsMain == 1) begin
-			if (key_data == 1) begin
-				IsMain <= 0;
-			end
-		end
+	always @(clk) begin  //í‚¤ 1ë²ˆì´ ì…ë ¥ë˜ë©´ Mainì´ í’€ë¦¬ê³  ê²Œì„ëª¨ë“œë¡œ ì§„ì…í•˜ë„ë¡ ì„¤ê³„
+		if (IsMain_dip)
+		IsMain <= 1;
+		else if (IsMain_dip == 0)
+		IsMain <= 0;
 	end
+	
 
-	always @(posedge clk1) begin //clk1À» ±â¹İÀ¸·Î sel_seg ¼³°è
+	always @(posedge clk1) begin //clk1ì„ ê¸°ë°˜ìœ¼ë¡œ sel_seg ì„¤ê³„
 		if (IsMain == 1) begin
 			if (sel_seg == 7) sel_seg <= 0;
 			else sel_seg <= sel_seg + 1;
 		end
 	end
 
-	always @(sel_seg) //sel_segÀ» ±â¹İÀ¸·Î 7-segment¿¡ Ç¥½Ã
+	always @(sel_seg) //sel_segì„ ê¸°ë°˜ìœ¼ë¡œ 7-segmentì— í‘œì‹œ
 		if (IsMain == 1) begin
 			case(sel_seg)
 				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
@@ -147,12 +160,15 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 				7: begin seg_com <= 8'b11111110; seg_txt <= 7'b0000110; end //1 =>bc
 			endcase
 		end
+
+
+	//main(=0)ìƒíƒœê°€ ì•„ë‹Œ ê²Œì„ìƒíƒœì—ì„œ ì…ë ¥ë„ ë°›ê³  ì¶œë ¥ë„ í•˜ëŠ” ëª¨ë“ˆ
+
+	
+
+
+
+	//board ë°ì´í„°ë¥¼ ë°”íƒ•ìœ¼ë¡œ dot displayì— ë„ìš¸ ìˆ˜ ìˆê²Œ í•©ë‹ˆë‹¤.
+	
+
 endmodule
-
-	//main(=0)»óÅÂ°¡ ¾Æ´Ñ °ÔÀÓ»óÅÂ¿¡¼­ ÀÔ·Âµµ ¹Ş°í Ãâ·Âµµ ÇÏ´Â ¸ğµâ
-
-
-
-
-
-	//board µ¥ÀÌÅÍ¸¦ ¹ÙÅÁÀ¸·Î dot display¿¡ ¶ç¿ï ¼ö ÀÖ°Ô ÇÕ´Ï´Ù.
