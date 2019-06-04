@@ -1,3 +1,4 @@
+
 //컴파일 완료: 수정시 주석 삭제
 
 module mainState(clk, key_data, IsMain, seg_txt, seg_com);
