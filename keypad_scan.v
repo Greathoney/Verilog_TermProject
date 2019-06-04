@@ -1,4 +1,6 @@
-//ÄÄÆÄÀÏ ¿Ï·á ¼öÁ¤½Ã ÁÖ¼®»èÁ¦
+
+
+//ì»´íŒŒì¼ ì™„ë£Œ ìˆ˜ì •ì‹œ ì£¼ì„ì‚­ì œ
 
 
 // 2010.11.18
@@ -62,7 +64,7 @@ module keypad_scan(clk, rst, key_col, key_row, key_data, IsRight);
 	  	4'b0001 : key_data <= 2; // key_2
 	  	4'b0010 : key_data <= 5; // key_5
 	  	4'b0100 : key_data <= 8; // key_8
-	  	4'b1000 : key_data <= 0; // key_0 : ¾Æ¹«ÀÏ ¾ÈÇÔ
+	  	4'b1000 : key_data <= 0; // key_0 : ì•„ë¬´ì¼ ì•ˆí•¨
 	  	default : key_data <= 0;
 	  	endcase
 	  column3 : case (key_row)
