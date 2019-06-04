@@ -82,13 +82,9 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 	function [13:0] rom1;
 		input [3:0] row;
 		input [17:0] board;
-		reg [1:0] iter;
 
 		begin
-			iter = 2*(row/4);
-			rom1 = {3'b000, fun(row, board[5-iter:4-iter]),
-					1'b0, fun(row, board[11-iter:10-iter]),
-					1'b0, fun(row, board[17-iter:16-iter])};
+		 
 		end
 
 	endfunction
@@ -119,4 +115,3 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 	endfunction
 
 endmodule
-
