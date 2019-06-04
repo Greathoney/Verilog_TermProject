@@ -16,15 +16,15 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 	reg clk;
 	reg [14:0] count;
 
-	// 25MHz ÀÎ Entry IIÀÇ Å¬·ÏÀ» 1KHzÀÇ Å¬·ÏÀ¸·Î ºĞÁÖÇÑ´Ù.
+	// 25MHz ì¸ Entry IIì˜ í´ë¡ì„ 1KHzì˜ í´ë¡ìœ¼ë¡œ ë¶„ì£¼í•œë‹¤.
 	always @ (posedge freq or posedge rst) begin
 		if (rst) begin count <= 0; clk <= 1; end
 		else if (count >= 12499) begin count <= 0; clk <= ~clk; end
 		else count <= count + 1;
 	end
 
-	// Å¬·Ï¿¡ µ¿±âÇÏ¿© cnt_row¸¦ Ä«¿îÆ®ÇÏ¿© 11°³ÀÇ row ½ºÄµ ½ÅÈ£¸¦ ¸¸µç´Ù.
-	// row ½ºÄµÀÌ ³¡³¯ ¶§¸¶´Ù ÇÑ¹øÀÇ clk_col ½ÅÈ£¸¦ »ı¼ºÇÑ´Ù.
+	// í´ë¡ì— ë™ê¸°í•˜ì—¬ cnt_rowë¥¼ ì¹´ìš´íŠ¸í•˜ì—¬ 11ê°œì˜ row ìŠ¤ìº” ì‹ í˜¸ë¥¼ ë§Œë“ ë‹¤.
+	// row ìŠ¤ìº”ì´ ëë‚  ë•Œë§ˆë‹¤ í•œë²ˆì˜ clk_col ì‹ í˜¸ë¥¼ ìƒì„±í•œë‹¤.
 	always @ (posedge clk or posedge rst) begin
 		if (rst) begin
 			dot_row <= 1;
@@ -45,8 +45,8 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 		end
 	end
 
-	// clk_col¿¡ µ¿±âÇÏ¿© cnt_colÀ» 0~13±îÁö Ä«¿îÆ®
-	// Ä«¿îÆ®°¡ ³¡³¯ ¶§¸¶´Ù ÇÑ ¹øÀÇ clk_fra ½ÅÈ£ »ı¼º
+	// clk_colì— ë™ê¸°í•˜ì—¬ cnt_colì„ 0~13ê¹Œì§€ ì¹´ìš´íŠ¸
+	// ì¹´ìš´íŠ¸ê°€ ëë‚  ë•Œë§ˆë‹¤ í•œ ë²ˆì˜ clk_fra ì‹ í˜¸ ìƒì„±
 	always @ (posedge clk_col or posedge rst) begin
 		if (rst) begin
 			cnt_col <= 0;
@@ -63,22 +63,22 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 		end
 	end
 
-	// clk_fra¿¡ µ¿±âÇÏ¿© cnt_fra¸¦ Ä«¿îÆ®
+	// clk_fraì— ë™ê¸°í•˜ì—¬ cnt_fraë¥¼ ì¹´ìš´íŠ¸
 	always @ (posedge clk_fra or posedge rst) begin
 		if (rst) cnt_fra <= 0;
 		else begin
-			if (cnt_fra == 9) cnt <= 0;
+			if (cnt_fra == 9) cnt_fra <= 0;
 			else cnt_fra <= cnt_fra + 1;
 		end
 	end
 
-	// cnt_row+IsRight, cnt_fra¸¦ ÁÖ¼Ò·Î ÇÏ´Â ·ÒÀÇ µ¥ÀÌÅÍ¸¦ dot_col·Î Ãâ·Â
+	// cnt_row+IsRight, cnt_fraë¥¼ ì£¼ì†Œë¡œ í•˜ëŠ” ë¡¬ì˜ ë°ì´í„°ë¥¼ dot_colë¡œ ì¶œë ¥
 	always @ (cnt_fra) begin
 		dot_col = rom1(cnt_row+IsRight, board);
 	end
 
-    // ÇöÀç Çà À§Ä¡¿Í board¸¦ ÀÔ·ÂÀ¸·Î ¹Ş¾Æ
-    // dot matrix displayÀÇ ÇÑ ÇàÀÇ °ªÀ» ¹İÈ¯ÇÏ´Â ÇÔ¼ö
+    // í˜„ì¬ í–‰ ìœ„ì¹˜ì™€ boardë¥¼ ì…ë ¥ìœ¼ë¡œ ë°›ì•„
+    // dot matrix displayì˜ í•œ í–‰ì˜ ê°’ì„ ë°˜í™˜í•˜ëŠ” í•¨ìˆ˜
 	function [13:0] rom1;
 		input [3:0] row;
 		input [17:0] board;
@@ -91,31 +91,32 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 					1'b0, fun(row, board[17-iter:16-iter])};
 		end
 
+	endfunction
 
-		function [2:0] fun;
-			input [3:0] row;
-			input [1:0] boardElement;
 
-			begin
-				if (row % 4 == 1) begin
-					case (boardElement)
-						0: fun = 3'b000;
-						1: fun = 3'b010;
-						2: fun = 3'b101;
-					endcase
-				end
-				else if (row % 4 == 3) fun = 3'b000;
-				else begin
-					case (boardElement)
-						0: fun = 3'b000;
-						1: fun = 3'b101;
-						2: fun = 3'b010;
-					endcase
-				end
+	function [2:0] fun;
+		input [3:0] row;
+		input [1:0] boardElement;
+
+		begin
+			if (row % 4 == 1) begin
+				case (boardElement)
+					0: fun = 3'b000;
+					1: fun = 3'b010;
+					2: fun = 3'b101;
+				endcase
 			end
-
-		endfunction
+			else if (row % 4 == 3) fun = 3'b000;
+			else begin
+				case (boardElement)
+					0: fun = 3'b000;
+					1: fun = 3'b101;
+					2: fun = 3'b010;
+				endcase
+			end
+		end
 
 	endfunction
 
 endmodule
+
