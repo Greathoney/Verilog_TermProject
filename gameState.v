@@ -40,6 +40,9 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
 
   always @(posedge clk1) begin
     if(sel_seg == 1 && result == 0) sel_seg <= 0;
+    else if (result == 0) sel_seg <= sel_seg + 1;
+
+    if (sel_seg == 7 && result != 0) sel_seg <= 0;  //승패가 끝났을 때
     else sel_seg <= sel_seg + 1;
   end
 
@@ -62,21 +65,25 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
       endcase
 	  end
 
-    if (result == 3 && IsTurnO) begin
+    if (result == 1) begin
       case(sel_seg)
-	    //P1 lose segment를 띄우게 된다.
+	    //P2 lose segment를 띄우게 된다.
+        0: begin end
+        1: begin end
+      endcase
+    end
+
+    else if (result == 2) begin
+      case(sel_seg)
+	    //P1 lose를 7segment로 띄우게 된다.
         0: begin end
         1: begin end
       endcase
     end
 
     else if (result == 3) begin
-      case(sel_seg)
-	    //P2 lose를 7segment로 띄우게 된다.
-        0: begin end
-        1: begin end
-      endcase
-    end
+      case
+
 	end
 
   // key data를 board로
