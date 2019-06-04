@@ -13,6 +13,25 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 	reg IsTurnO = 0; //O의 차례인지(1) X의 차례인지(0) 확인, 0으로 초기화
 	reg [18:0] board = 18'b00_00_00_00_00_00_00_00_00; //보드에 어떤 돌이 놓여있는지 확인 0: 없음, 1: X돌, 2: O돌
 
+	//keypad_scan
+	reg	[2:0]	state;
+	reg [13:0] counts;
+	reg clk1;
+	wire	key_stop;
+
+	parameter no_scan = 3'b000;
+	parameter column1 = 3'b001;
+	parameter column2 = 3'b010;
+	parameter column3 = 3'b100;
+
+	//mainstate
+	reg [20:0]clk_count;
+	reg [7:0] seg_com;
+	reg [6:0] seg_txt;
+	reg [3:0] sel_seg;
+	reg clk2;
+
+
 	always @(posedge rst) begin //reset 할 수 있는 부분
 		IsMain <= 1;
 		IsRight <= 0;
@@ -21,21 +40,10 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 	end
 
 
-
 	//MODULE KEYPAD_SCAN
 	//키패드 스캔하기, key_data를 받아옴
 	//누르지 않을때는 key_data = 12'b0000_0000_0000 누르는 동안 어느 숫자가 1로 변함
-	reg	[3:0]	key_data;
-	reg	[2:0]	state;
-	reg [13:0] counts;
-	reg clk1;
-	reg IsRight;
-	wire	key_stop;
 	// define state of FSM
-	parameter no_scan = 3'b000;
-	parameter column1 = 3'b001;
-	parameter column2 = 3'b010;
-	parameter column3 = 3'b100;
 
 	assign key_stop = key_row[0] | key_row[1] | key_row[2] | key_row[3] ;
 	assign key_col = state;
@@ -96,28 +104,22 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 
 	//컴파일 완료: 수정시 주석 삭제
 
-	  //메인메뉴에서의 상태를 표시합니다. IsMain = 1일때만 활성화, 0으로 바뀔수 있는 조건 갖춤
-	reg [20:0]clk_count;
-	reg [7:0] seg_com;
-	reg [6:0] seg_txt;
-	reg IsMain;
-	reg [3:0] sel_seg;
-	reg clk1;
+	//메인메뉴에서의 상태를 표시합니다. IsMain = 1일때만 활성화, 0으로 바뀔수 있는 조건 갖춤
 
-	always @(posedge clk) begin // clk1 설계
+	always @(posedge clk) begin // clk2 설계
 		if (IsMain == 1) begin
 			if (clk_count >= 24999) begin
 				clk_count <= 0;
-				clk1 <= 1;
+				clk2 <= 1;
 			end
 			else begin
 				clk_count <= clk_count + 1;
-				clk1 <= 0;
+				clk2 <= 0;
 			end
 		end
 	end
 
-	always @(posedge clk1) begin  //키 1번이 입력되면 Main이 풀리고 게임모드로 진입하도록 설계
+	always @(posedge clkw) begin  //키 1번이 입력되면 Main이 풀리고 게임모드로 진입하도록 설계
 		if (IsMain == 1) begin
 			if (key_data == 1) begin
 				IsMain <= 0;
@@ -158,6 +160,3 @@ endmodule
 
 
 	//board 데이터를 바탕으로 dot display에 띄울 수 있게 합니다.
-
-
-endmodule
