@@ -119,7 +119,7 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 		end
 	end
 
-	always @(posedge clkw) begin  //키 1번이 입력되면 Main이 풀리고 게임모드로 진입하도록 설계
+	always @(posedge clk2) begin  //키 1번이 입력되면 Main이 풀리고 게임모드로 진입하도록 설계
 		if (IsMain == 1) begin
 			if (key_data == 1) begin
 				IsMain <= 0;
