@@ -1,6 +1,6 @@
 module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 	input clk, rst; //클럭, 리셋
-	input	[3:0]key_row; //keypad 스캔
+	input [3:0]key_row; //keypad 스캔
 	output [2:0]key_col; //keypad 스캔
 	output [6:0]seg_txt; //7-segment 한 자리에 대해 문자 표현
 	output [7:0]seg_com; //7-segment 위치 결정
@@ -14,10 +14,10 @@ module TTT(clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row);
 	reg [18:0] board = 18'b00_00_00_00_00_00_00_00_00; //보드에 어떤 돌이 놓여있는지 확인 0: 없음, 1: X돌, 2: O돌
 
 	//keypad_scan
-	reg	[2:0]	state;
+	reg	[2:0] state;
 	reg [13:0] counts;
 	reg clk1;
-	wire	key_stop;
+	wire key_stop;
 
 	parameter no_scan = 3'b000;
 	parameter column1 = 3'b001;
