@@ -84,32 +84,36 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 		input [17:0] board;
 
 		begin
-		 
+			case (row)
+				0: rom1 = {3'b000, fun(0, board[5:4], 1'b0, fun(0, board[11:10], 1'b0, fun(0, board[17:16]);
+				1: rom1 = {3'b000, fun(1, board[5:4], 1'b0, fun(1, board[11:10], 1'b0, fun(1, board[17:16]);
+				2: rom1 = {3'b000, fun(0, board[5:4], 1'b0, fun(0, board[11:10], 1'b0, fun(0, board[17:16]);
+				3: rom1 = 14'b00000000000000;
+				4: rom1 = {3'b000, fun(0, board[3:2], 1'b0, fun(0, board[9:8], 1'b0, fun(0, board[15:14]);
+				5: rom1 = {3'b000, fun(1, board[3:2], 1'b0, fun(1, board[9:8], 1'b0, fun(1, board[15:14]);
+				6: rom1 = {3'b000, fun(0, board[3:2], 1'b0, fun(0, board[9:8], 1'b0, fun(0, board[15:14]);
+				7: rom1 = 14'b00000000000000;
+				8: rom1 = {3'b000, fun(0, board[1:0], 1'b0, fun(0, board[7:6], 1'b0, fun(0, board[13:12]);
+				9: rom1 = {3'b000, fun(1, board[1:0], 1'b0, fun(1, board[7:6], 1'b0, fun(1, board[13:12]);
+				10: rom1 = {3'b000, fun(0, board[1:0], 1'b0, fun(0, board[7:6], 1'b0, fun(0, board[13:12]);
+				default: rom1 = 14'b00000000000000;
+			endcase
 		end
 
 	endfunction
 
 
 	function [2:0] fun;
-		input [3:0] row;
+		input isCenter;
 		input [1:0] boardElement;
 
 		begin
-			if (row % 4 == 1) begin
-				case (boardElement)
-					0: fun = 3'b000;
-					1: fun = 3'b010;
-					2: fun = 3'b101;
-				endcase
-			end
-			else if (row % 4 == 3) fun = 3'b000;
-			else begin
-				case (boardElement)
-					0: fun = 3'b000;
-					1: fun = 3'b101;
-					2: fun = 3'b010;
-				endcase
-			end
+			case (boardElement)
+				0: fun = 3'b000;
+				1: if (isCenter) fun = 3'b101; else fun = 3'010;
+				2: if (isCenter) fun = 3'b010; else fun = 3'101;
+				default: fun = 3'b000;
+			endcase
 		end
 
 	endfunction
