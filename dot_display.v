@@ -85,17 +85,17 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 
 		begin
 			case (row)
-				0: rom1 = {3'b000, fun(0, board[5:4], 1'b0, fun(0, board[11:10], 1'b0, fun(0, board[17:16]);
-				1: rom1 = {3'b000, fun(1, board[5:4], 1'b0, fun(1, board[11:10], 1'b0, fun(1, board[17:16]);
-				2: rom1 = {3'b000, fun(0, board[5:4], 1'b0, fun(0, board[11:10], 1'b0, fun(0, board[17:16]);
+				0: rom1 = {3'b000, fun(0, board[5:4], 1'b0, fun(0, board[11:10], 1'b0, fun(0, board[17:16])};
+				1: rom1 = {3'b000, fun(1, board[5:4], 1'b0, fun(1, board[11:10], 1'b0, fun(1, board[17:16])};
+				2: rom1 = {3'b000, fun(0, board[5:4], 1'b0, fun(0, board[11:10], 1'b0, fun(0, board[17:16])};
 				3: rom1 = 14'b00000000000000;
-				4: rom1 = {3'b000, fun(0, board[3:2], 1'b0, fun(0, board[9:8], 1'b0, fun(0, board[15:14]);
-				5: rom1 = {3'b000, fun(1, board[3:2], 1'b0, fun(1, board[9:8], 1'b0, fun(1, board[15:14]);
-				6: rom1 = {3'b000, fun(0, board[3:2], 1'b0, fun(0, board[9:8], 1'b0, fun(0, board[15:14]);
+				4: rom1 = {3'b000, fun(0, board[3:2], 1'b0, fun(0, board[9:8], 1'b0, fun(0, board[15:14])};
+				5: rom1 = {3'b000, fun(1, board[3:2], 1'b0, fun(1, board[9:8], 1'b0, fun(1, board[15:14])};
+				6: rom1 = {3'b000, fun(0, board[3:2], 1'b0, fun(0, board[9:8], 1'b0, fun(0, board[15:14])};
 				7: rom1 = 14'b00000000000000;
-				8: rom1 = {3'b000, fun(0, board[1:0], 1'b0, fun(0, board[7:6], 1'b0, fun(0, board[13:12]);
-				9: rom1 = {3'b000, fun(1, board[1:0], 1'b0, fun(1, board[7:6], 1'b0, fun(1, board[13:12]);
-				10: rom1 = {3'b000, fun(0, board[1:0], 1'b0, fun(0, board[7:6], 1'b0, fun(0, board[13:12]);
+				8: rom1 = {3'b000, fun(0, board[1:0], 1'b0, fun(0, board[7:6], 1'b0, fun(0, board[13:12])};
+				9: rom1 = {3'b000, fun(1, board[1:0], 1'b0, fun(1, board[7:6], 1'b0, fun(1, board[13:12])};
+				10: rom1 = {3'b000, fun(0, board[1:0], 1'b0, fun(0, board[7:6], 1'b0, fun(0, board[13:12])};
 				default: rom1 = 14'b00000000000000;
 			endcase
 		end
