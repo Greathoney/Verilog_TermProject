@@ -156,8 +156,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 				3: begin seg_com <= 8'b11101111; seg_txt <= 7'b1101101; end //s =>acdfg
 				4: begin seg_com <= 8'b11110111; seg_txt <= 7'b1101101; end //s =>acdfg
 				5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0000000; end //' '
-				6: begin seg_com <= 8'b11111101; seg_txt <= 7'b0111111; end //0 =>abcdef
-				7: begin seg_com <= 8'b11111110; seg_txt <= 7'b0000110; end //1 =>bc
+				6: begin seg_com <= 8'b11111101; seg_txt <= 7'b0111110; end //u =>bcdef
+				7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1110011; end //p =>abefg
 			endcase
 		end
 
