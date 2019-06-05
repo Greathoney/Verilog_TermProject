@@ -41,6 +41,15 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	reg clk3;
   reg result; // 00 : 진행중   01 : X승   10 : O승   11 : 무승부
 
+	//dot_display
+	reg [13:0] dot_col;
+	reg [9:0] dot_row;
+	reg [3:0] cnt_row, cnt_fra;
+	reg [7:0] cnt_col;
+	reg clk_col, clk_fra;
+	reg clk4;
+	reg [14:0] count;
+
 	always @(posedge clk) begin
 		if (IsMain == 1) begin check_IsMain <= 1; check_notIsMain <= 0; end
 		else if (IsMain == 0) begin check_IsMain <= 0; check_notIsMain <= 1; end
