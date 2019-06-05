@@ -61,6 +61,9 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		if (key_data == 1) keydata_1 <= 1;
 		else keydata_1 <= 0;
 		
+		if(key_data == 5) check_keypad <= 1;
+		else check_keypad <= 0;
+		
 		if (board[17:16]!=2'b00) check_board[0] = 1; else check_board[0] = 0;
 		if (board[15:14]!=2'b00) check_board[1] = 1; else check_board[1] = 0;
 		if (board[13:12]!=2'b00) check_board[2] = 1; else check_board[2] = 0;
@@ -72,10 +75,6 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		
 	end
 	
-	always@(key_data) begin
-		if(key_data == 5) check_keypad <= 1;
-		else check_keypad <= 0;
-	end
 	
 	
 
@@ -129,7 +128,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 				4'b0100 : key_data <= 9; // key_9
 				4'b1000 : IsRight <= 1; // key_#
 			endcase
-			default : key_data <= 0;
+			//default : key_data <= 0;
 		endcase
 	end
 
@@ -216,8 +215,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
           endcase
         end
       end
-
-    if (result == 1) begin
+	
+    if (IsMain==0 && result == 1) begin
       case(sel_seg)
 	    //P2 lose segment를 띄우게 된다.
       0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
@@ -231,7 +230,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
       endcase
     end
 
-    else if (result == 2) begin
+    else if (IsMain==0 && result == 2) begin
       case(sel_seg)
 	    //P1 lose를 7segment로 띄우게 된다.
         0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1110011; end //p =>abefg
@@ -245,7 +244,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
         endcase
     end
 
-    else if (result == 3) begin
+    else if (IsMain==0 && result == 3) begin
       case(sel_seg)
         0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1111000; end // t => defg
         1: begin seg_com <= 8'b01111111; seg_txt <= 7'b0110000; end // i => ef
@@ -256,7 +255,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	end
 
   // key data를 board로
-	always @(posedge key_data or posedge rst) begin
+	always @(posedge clk2 or posedge rst) begin
 		if (rst) board <= 0;
 		else begin
 		    case (key_data)
@@ -394,17 +393,17 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 		begin
 			case (row)
-				0: rom1 = {3'b000, fun(0, board[5:4]), 1'b1, fun(0, board[11:10]), 1'b1, fun(0, board[17:16])};
-				1: rom1 = {3'b000, fun(1, board[5:4]), 1'b1, fun(1, board[11:10]), 1'b1, fun(1, board[17:16])};
-				2: rom1 = {3'b000, fun(0, board[5:4]), 1'b1, fun(0, board[11:10]), 1'b1, fun(0, board[17:16])};
-				3: rom1 = 14'b00011111111111;
-				4: rom1 = {3'b000, fun(0, board[3:2]), 1'b1, fun(0, board[9:8]), 1'b1, fun(0, board[15:14])};
-				5: rom1 = {3'b000, fun(1, board[3:2]), 1'b1, fun(1, board[9:8]), 1'b1, fun(1, board[15:14])};
-				6: rom1 = {3'b000, fun(0, board[3:2]), 1'b1, fun(0, board[9:8]), 1'b1, fun(0, board[15:14])};
-				7: rom1 = 14'b00011111111111;
-				8: rom1 = {3'b000, fun(0, board[1:0]), 1'b1, fun(0, board[7:6]), 1'b1, fun(0, board[13:12])};
-				9: rom1 = {3'b000, fun(1, board[1:0]), 1'b1, fun(1, board[7:6]), 1'b1, fun(1, board[13:12])};
-				10: rom1 = {3'b000, fun(0, board[1:0]), 1'b1, fun(0, board[7:6]), 1'b1, fun(0, board[13:12])};
+				0: rom1 = {3'b000, fun(0, board[5:4]), 1'b0, fun(0, board[11:10]), 1'b0, fun(0, board[17:16])};
+				1: rom1 = {3'b000, fun(1, board[5:4]), 1'b0, fun(1, board[11:10]), 1'b0, fun(1, board[17:16])};
+				2: rom1 = {3'b000, fun(0, board[5:4]), 1'b0, fun(0, board[11:10]), 1'b0, fun(0, board[17:16])};
+				3: rom1 = 14'b00000000000000;
+				4: rom1 = {3'b000, fun(0, board[3:2]), 1'b0, fun(0, board[9:8]), 1'b0, fun(0, board[15:14])};
+				5: rom1 = {3'b000, fun(1, board[3:2]), 1'b0, fun(1, board[9:8]), 1'b0, fun(1, board[15:14])};
+				6: rom1 = {3'b000, fun(0, board[3:2]), 1'b0, fun(0, board[9:8]), 1'b0, fun(0, board[15:14])};
+				7: rom1 = 14'b00000000000000;
+				8: rom1 = {3'b000, fun(0, board[1:0]), 1'b0, fun(0, board[7:6]), 1'b0, fun(0, board[13:12])};
+				9: rom1 = {3'b000, fun(1, board[1:0]), 1'b0, fun(1, board[7:6]), 1'b0, fun(1, board[13:12])};
+				10: rom1 = {3'b000, fun(0, board[1:0]), 1'b0, fun(0, board[7:6]), 1'b0, fun(0, board[13:12])};
 				default: rom1 = 14'b00000000000000;
 				
 			endcase
@@ -420,8 +419,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		begin
 			case (boardElement)
 				0: fun = 3'b000;
-				1: if (isCenter) fun = 3'b101; else fun = 3'b010;
-				2: if (isCenter) fun = 3'b010; else fun = 3'b101;
+				1: if (isCenter) fun = 3'b010; else fun = 3'b101;	// X
+				2: if (isCenter) fun = 3'b101; else fun = 3'b111;	// O
 				default: fun = 3'b000;
 			endcase
 		end
