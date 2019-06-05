@@ -32,6 +32,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 	//mainstate
 	reg [20:0]clk_count;
+	reg [20:0]clk_count2;
 	reg [7:0] seg_com;
 	reg [6:0] seg_txt;
 	reg [3:0] sel_seg;
@@ -123,12 +124,12 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 	always @(posedge clk) begin // clk2 설계
 		if (IsMain == 1) begin
-			if (clk_count >= 24999) begin
-				clk_count <= 0;
+			if (clk_count2 >= 24999) begin
+				clk_count2 <= 0;
 				clk2 <= 1;
 			end
 			else begin
-				clk_count <= clk_count + 1;
+				clk_count2 <= clk_count2 + 1;
 				clk2 <= 0;
 			end
 		end
