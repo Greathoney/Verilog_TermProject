@@ -1,4 +1,3 @@
-
 module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_col, dot_row, result);
 //게임상태에서의 환경을 구축합니다.
 //gameState에서 해야할 일
@@ -51,7 +50,7 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
         //7-segment에 P2를 표시하게 된다.
         case(sel_seg)
           0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
-          1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1101101; end //2 => abdeg
+          1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => abdeg
           endcase
         end
 
@@ -67,37 +66,37 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
     if (result == 1) begin
       case(sel_seg)
 	    //P2 lose segment를 띄우게 된다.
-      0: begin seg_com <= 8'b01111111; end //P
-      1: begin seg_com <= 8'b10111111; end //2
-      2: begin seg_com <= 8'b11011111; end
-      3: begin seg_com <= 8'b11101111; end
-      4: begin seg_com <= 8'b11110111; end //L
-      5: begin seg_com <= 8'b11111011; end //O
-      6: begin seg_com <= 8'b11111101; end //S
-      7: begin ; end //E
+      0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
+      1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => ABDEG
+      2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
+      3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
+      4: begin seg_com <= 8'b11110111; seg_txt <= 7'b0111000; end //L => def
+      5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0111111; end //O => abcdef
+      6: begin seg_com <= 8'b11111101; seg_txt <= 7'b1101101; end //s =>acdfg
+      7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1111001; end //E => adefg
       endcase
     end
 
     else if (result == 2) begin
       case(sel_seg)
 	    //P1 lose를 7segment로 띄우게 된다.
-        0: begin seg_com <= 8'b11111111; seg_txt <=  end //P
-        1: begin seg_com <= 8'b10111111; end //1
-        2: begin seg_com <= 8'b11011111; end
-        3: begin seg_com <= 8'b11101111; end
-        4: begin seg_com <= 8'b01110111; end //L
-        5: begin seg_com <= 8'b01111011; end //O
-        6: begin seg_com <= 8'b01111101; end //S
-        7: begin ; end //E
+        0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1110011; end //p =>abefg
+        1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
+        2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
+        3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
+        4: begin seg_com <= 8'b11110111; seg_txt <= 7'b0111000; end //L => def
+        5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0111111; end //O => abcdef
+        6: begin seg_com <= 8'b11111101; seg_txt <= 7'b1101101; end //s =>acdfg
+        7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1111001; end //E => adefg
         endcase
     end
 
     else if (result == 3) begin
       case(sel_seg)
-        0: begin end //d
-        1: begin end //r
-        2: begin end //A
-        3: begin end //W
+        0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1111000; end // t => defg
+        1: begin seg_com <= 8'b01111111; seg_txt <= 7'b0110000; end // i => ef 
+        2: begin seg_com <= 8'b10111111; seg_txt <= 7'b1111001; end //E => adefg
+        //3: begin end // => 
       endcase
     end
 	end
