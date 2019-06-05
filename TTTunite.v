@@ -61,7 +61,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 	//Module keypad_scan
 	//키패드 스캔하기, key_data를 받아옴
-	//누르지 않을때는 key_data = 12'b0000_0000_0000 누르는 동안 어느 숫자가 1로 변함
+	//누르지 않을때는 key_data <= 12'b0000_0000_0000 누르는 동안 어느 숫자가 1로 변함
 	// define state of FSM
 
 	assign key_stop = key_row[0] | key_row[1] | key_row[2] | key_row[3] ;
@@ -249,49 +249,49 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		if (rst) board <= 0;
 		else begin
 		    case (key_data)
-			    1: if(IsTurnO) board[17] = 1; else board[16] = 1;
-			    2: if(IsTurnO) board[15] = 1; else board[14] = 1;
-			    3: if(IsTurnO) board[13] = 1; else board[12] = 1;
-			    4: if(IsTurnO) board[11] = 1; else board[10] = 1;
-			    5: if(IsTurnO) board[9] = 1; else board[8] = 1;
-			    6: if(IsTurnO) board[7] = 1; else board[6] = 1;
-			    7: if(IsTurnO) board[5] = 1; else board[4] = 1;
-			    8: if(IsTurnO) board[3] = 1; else board[2] = 1;
-			    9: if(IsTurnO) board[1] = 1; else board[0] = 1;
-			    // board[18 - 2 * key_data + IsTurnO] = 1;
+			    1: if(IsTurnO) board[17] <= 1; else board[16] <= 1;
+			    2: if(IsTurnO) board[15] <= 1; else board[14] <= 1;
+			    3: if(IsTurnO) board[13] <= 1; else board[12] <= 1;
+			    4: if(IsTurnO) board[11] <= 1; else board[10] <= 1;
+			    5: if(IsTurnO) board[9] <= 1; else board[8] <= 1;
+			    6: if(IsTurnO) board[7] <= 1; else board[6] <= 1;
+			    7: if(IsTurnO) board[5] <= 1; else board[4] <= 1;
+			    8: if(IsTurnO) board[3] <= 1; else board[2] <= 1;
+			    9: if(IsTurnO) board[1] <= 1; else board[0] <= 1;
+			    // board[18 - 2 * key_data + IsTurnO] <= 1;
 			endcase
 		end
 	end
 
-	always @(board or posedge rst) begin
+	always @(IsTurnO or posedge rst) begin
 		if(rst) IsTurnO <= 0;
 		//3목을 판별하는 알고리즘
 		//IsTurnO를 이용한다.
 	    else if (IsTurnO) begin
 	      // X의 삼목 판별
-	      if (board[16] && board[14] && board[12]) result = 2'b01;
-	      else if (board[10] && board[8] && board[6]) result = 2'b01;
-	      else if (board[4] && board[2] && board[0]) result = 2'b01;
+	      if (board[16] && board[14] && board[12]) result <= 2'b01;
+	      else if (board[10] && board[8] && board[6]) result <= 2'b01;
+	      else if (board[4] && board[2] && board[0]) result <= 2'b01;
 
-	      else if (board[16] && board[10] && board[4]) result = 2'b01;
-	      else if (board[14] && board[8] && board[2]) result = 2'b01;
-	      else if (board[12] && board[6] && board[0]) result = 2'b01;
+	      else if (board[16] && board[10] && board[4]) result <= 2'b01;
+	      else if (board[14] && board[8] && board[2]) result <= 2'b01;
+	      else if (board[12] && board[6] && board[0]) result <= 2'b01;
 
-	      else if (board[16] && board[8] && board[0]) result = 2'b01;
-	      else if (board[12] && board[8] && board[4]) result = 2'b01;
+	      else if (board[16] && board[8] && board[0]) result <= 2'b01;
+	      else if (board[12] && board[8] && board[4]) result <= 2'b01;
 	    end
 	    else begin
 	      // O의 삼목 판별
-	      if (board[17] && board[15] && board[13]) result = 2'b10;
-	      else if (board[11] && board[9] && board[7]) result = 2'b10;
-	      else if (board[5] && board[3] && board[1]) result = 2'b10;
+	      if (board[17] && board[15] && board[13]) result <= 2'b10;
+	      else if (board[11] && board[9] && board[7]) result <= 2'b10;
+	      else if (board[5] && board[3] && board[1]) result <= 2'b10;
 
-	      else if (board[17] && board[11] && board[5]) result = 2'b10;
-	      else if (board[15] && board[9] && board[3]) result = 2'b10;
-	      else if (board[13] && board[7] && board[1]) result = 2'b10;
+	      else if (board[17] && board[11] && board[5]) result <= 2'b10;
+	      else if (board[15] && board[9] && board[3]) result <= 2'b10;
+	      else if (board[13] && board[7] && board[1]) result <= 2'b10;
 
-	      else if (board[17] && board[9] && board[1]) result = 2'b10;
-	      else if (board[13] && board[9] && board[5]) result = 2'b10;
+	      else if (board[17] && board[9] && board[1]) result <= 2'b10;
+	      else if (board[13] && board[9] && board[5]) result <= 2'b10;
 	    end
 
 	    // board가 꽉 채워졌는지 판별
@@ -299,10 +299,10 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	      (board[11]|board[10]) & (board[9]|board[8]) & (board[7]|board[6]) &
 	      (board[5]|board[4]) & (board[3]|board[2]) & (board[1]|board[0]))
 	      begin
-	        result = 2'b11;
+	        result <= 2'b11;
 	      end
 
-	    else begin result = 2'b00; end
+	    else begin result <= 2'b00; end
 
 			IsTurnO <= ~IsTurnO;
 		//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
@@ -371,7 +371,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 	// cnt_row+IsRight, cnt_fra를 주소로 하는 롬의 데이터를 dot_col로 출력
 	always @ (cnt_fra) begin
-		dot_col = rom1(cnt_row+IsRight, board);
+		dot_col <= rom1(cnt_row+IsRight, board);
 	end
 
     // 현재 행 위치와 board를 입력으로 받아
