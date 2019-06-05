@@ -1,4 +1,4 @@
-module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row, check_IsMain, check_notIsMain, check_board, check_keypad);
+module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, dot_col, dot_row, check_IsMain, check_notIsMain, check_keypad, check_result);
 	input clk, rst; //클럭, 리셋
 	input [3:0]key_row; //keypad 스캔
 	output [2:0]key_col; //keypad 스캔
@@ -8,11 +8,10 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	output [9:0] dot_row; //dot maxtrix 정보
 	output check_IsMain;
 	output check_notIsMain;
-	output [7:0]check_board;
 	output keydata_1;
 	output check_keypad;
+	output [1:0] check_result;
 	reg check_keypad;
-	reg [7:0]check_board;
 	reg keydata_1;
 	input IsMain_dip;
 
@@ -22,7 +21,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	reg IsTurnO = 0; //O의 차례인지(1) X의 차례인지(0) 확인, 0으로 초기화
 	reg [17:0] board = 18'b00_00_00_00_00_00_00_00_00; //보드에 어떤 돌이 놓여있는지 확인 0: 없음, 1: X돌, 2: O돌
 	reg check_IsMain, check_notIsMain;
-
+	reg [1:0] check_result;
+	
 	//keypad_scan
 	reg	[2:0] state;
 	reg [13:0] counts;
@@ -43,7 +43,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	reg clk2;
 
 	//gamestate
-  reg result; // 00 : 진행중   01 : X승   10 : O승   11 : 무승부
+    reg [1:0] result; // 00 : 진행중   01 : X승   10 : O승   11 : 무승부
 
 	//dot_display
 	reg [13:0] dot_col;
@@ -64,14 +64,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		if(key_data == 4) check_keypad <= 1;
 		else check_keypad <= 0;
 
-		if (board[17:16]!=2'b00) check_board[0] = 1; else check_board[0] = 0;
-		if (board[15:14]!=2'b00) check_board[1] = 1; else check_board[1] = 0;
-		if (board[13:12]!=2'b00) check_board[2] = 1; else check_board[2] = 0;
-		if (board[11:10]!=2'b00) check_board[3] = 1; else check_board[3] = 0;
-		if (board[9:8]!=2'b00) check_board[4] = 1; else check_board[4] = 0;
-		if (board[7:6]!=2'b00) check_board[5] = 1; else check_board[5] = 0;
-		if (board[5:4]!=2'b00) check_board[6] = 1; else check_board[6] = 0;
-		if (board[3:2]!=2'b00) check_board[7] = 1; else check_board[7] = 0;
+		check_result = result;
 
 	end
 
@@ -180,7 +173,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	else begin
 	    if(sel_seg == 1 && result == 0) sel_seg <= 0;  //승패가 갈리지 않았을 때 2글자만 띄우게 된다.
 	    else if (sel_seg == 4 && result == 3) sel_seg <= 0;  //무승부일때 4글자만 띄우게 된다.
-	    else if (sel_seg == 7 && result != 0) sel_seg <= 0; //승패가 갈릴때 8글자 모두 쓰게 된다.
+	    else if (sel_seg >= 7) sel_seg <= 0; //승패가 갈릴때 8글자 모두 쓰게 된다.
 	    else sel_seg <= sel_seg + 1;
 	  end
 	end
@@ -199,107 +192,109 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		endcase
 	end
 
-    else if(IsMain==0 && result == 0)begin
-      if (IsTurnO == 1) begin
-        //7-segment에 P2를 표시하게 된다.
-        case(sel_seg)
-          0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
-          1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => abdeg
+    else begin //IsMain == 0;
+	  case (result)
+	    0: begin
+          if (IsTurnO == 1) begin
+            //7-segment에 P2를 표시하게 된다.
+            case(sel_seg)
+              0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
+              1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => abdeg
+            endcase
+          end
+
+          else begin
+            //7-segment에 P1을 표시하게 된다.
+            case(sel_seg)
+              0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
+              1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
+            endcase
+          end
+		end
+		1: begin
+          case(sel_seg)
+	        //P2 lose segment를 띄우게 된다.
+	          0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
+	          1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => ABDEG
+	          2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
+	          3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
+	          4: begin seg_com <= 8'b11110111; seg_txt <= 7'b0111000; end //L => def
+	          5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0111111; end //O => abcdef
+	          6: begin seg_com <= 8'b11111101; seg_txt <= 7'b1101101; end //s =>acdfg
+	          7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1111001; end //E => adefg
           endcase
         end
 
-      else begin
-        //7-segment에 P1을 표시하게 된다.
-        case(sel_seg)
-          0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
-          1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
+        2: begin
+          case(sel_seg)
+	        //P1 lose를 7segment로 띄우게 된다.
+            0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1110011; end //p =>abefg
+            1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
+            2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
+            3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
+            4: begin seg_com <= 8'b11110111; seg_txt <= 7'b0111000; end //L => def
+            5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0111111; end //O => abcdef
+            6: begin seg_com <= 8'b11111101; seg_txt <= 7'b1101101; end //s =>acdfg
+            7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1111001; end //E => adefg
+            endcase
+        end
+
+        3: begin
+          case(sel_seg)
+            0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1111000; end // t => defg
+            1: begin seg_com <= 8'b01111111; seg_txt <= 7'b0110000; end // i => ef
+            2: begin seg_com <= 8'b10111111; seg_txt <= 7'b1111001; end //E => adefg
           endcase
         end
-      end
-
-    if (IsMain==0 && result == 1) begin
-      case(sel_seg)
-	    //P2 lose segment를 띄우게 된다.
-	      0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
-	      1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => ABDEG
-	      2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
-	      3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
-	      4: begin seg_com <= 8'b11110111; seg_txt <= 7'b0111000; end //L => def
-	      5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0111111; end //O => abcdef
-	      6: begin seg_com <= 8'b11111101; seg_txt <= 7'b1101101; end //s =>acdfg
-	      7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1111001; end //E => adefg
       endcase
     end
-
-    else if (IsMain==0 && result == 2) begin
-      case(sel_seg)
-	    //P1 lose를 7segment로 띄우게 된다.
-        0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1110011; end //p =>abefg
-        1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
-        2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
-        3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
-        4: begin seg_com <= 8'b11110111; seg_txt <= 7'b0111000; end //L => def
-        5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0111111; end //O => abcdef
-        6: begin seg_com <= 8'b11111101; seg_txt <= 7'b1101101; end //s =>acdfg
-        7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1111001; end //E => adefg
-        endcase
-    end
-
-    else if (IsMain==0 && result == 3) begin
-      case(sel_seg)
-        0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1111000; end // t => defg
-        1: begin seg_com <= 8'b01111111; seg_txt <= 7'b0110000; end // i => ef
-        2: begin seg_com <= 8'b10111111; seg_txt <= 7'b1111001; end //E => adefg
-        //3: begin end // =>
-      endcase
-    end
-	end
-
+  end
   // key data를 board로
 	always @(posedge clk2 or posedge rst) begin
 		if (rst) board <= 0;
 		else if (IsMain_dip == 0 ) begin
 		    case (key_data)
-			    1: begin if(IsTurnO) board[17] <= 1; else board[16] <= 1; if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
-			    2: begin if(IsTurnO) board[15] <= 1; else board[14] <= 1; if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
-			    3: begin if(IsTurnO) board[13] <= 1; else board[12] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
-			    4: begin if(IsTurnO) board[11] <= 1; else board[10] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
-			    5: begin if(IsTurnO) board[9] <= 1; else board[8] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
-			    6: begin if(IsTurnO) board[7] <= 1; else board[6] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
-			    7: begin if(IsTurnO) board[5] <= 1; else board[4] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
-			    8: begin if(IsTurnO) board[3] <= 1; else board[2] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
-			    9: begin if(IsTurnO) board[1] <= 1; else board[0] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    1: if (board[17:16]==0) begin if(IsTurnO) board[17] <= 1; else board[16] <= 1; end
+			    2: if (board[15:14]==0) begin if(IsTurnO) board[15] <= 1; else board[14] <= 1; end
+			    3: if (board[13:12]==0) begin if(IsTurnO) board[13] <= 1; else board[12] <= 1; end
+			    4: if (board[11:10]==0) begin if(IsTurnO) board[11] <= 1; else board[10] <= 1; end
+			    5: if (board[9:8]==0) begin if(IsTurnO) board[9] <= 1; else board[8] <= 1; end
+			    6: if (board[7:6]==0) begin if(IsTurnO) board[7] <= 1; else board[6] <= 1; end
+			    7: if (board[5:4]==0) begin if(IsTurnO) board[5] <= 1; else board[4] <= 1; end
+			    8: if (board[3:2]==0) begin if(IsTurnO) board[3] <= 1; else board[2] <= 1; end
+			    9: if (board[1:0]==0) begin if(IsTurnO) board[1] <= 1; else board[0] <= 1; end
+				0: if (IsTurnO) IsTurnO = 0; else IsTurnO = 1;
 			    // board[18 - 2 * key_data + IsTurnO] <= 1;
 			endcase
 		end
 	end
 
 
-	always @(negedge key_data) begin  //이거 외않돼
+	always @(posedge clk2) begin  //이거 외않돼
 		//3목을 판별하는 알고리즘
 		//IsTurnO를 이용한다.
 	      // X의 삼목 판별
-	      if (board[16] && board[14] && board[12]) result <= 2'b01;
-	      else if (board[10] && board[8] && board[6]) result <= 2'b01;
-	      else if (board[4] && board[2] && board[0]) result <= 2'b01;
+	      if (board[16] & board[14] & board[12]) result <= 2'b01;
+	      else if (board[10] & board[8] & board[6]) result <= 2'b01;
+	      else if (board[4] & board[2] & board[0]) result <= 2'b01;
 
-	      else if (board[16] && board[10] && board[4]) result <= 2'b01;
-	      else if (board[14] && board[8] && board[2]) result <= 2'b01;
-	      else if (board[12] && board[6] && board[0]) result <= 2'b01;
+	      else if (board[16] & board[10] & board[4]) result <= 2'b01;
+	      else if (board[14] & board[8] & board[2]) result <= 2'b01;
+	      else if (board[12] & board[6] & board[0]) result <= 2'b01;
 
-	      else if (board[16] && board[8] && board[0]) result <= 2'b01;
-	      else if (board[12] && board[8] && board[4]) result <= 2'b01;
+	      else if (board[16] & board[8] & board[0]) result <= 2'b01;
+	      else if (board[12] & board[8] & board[4]) result <= 2'b01;
 	      // O의 삼목 판별
-	      else if (board[17] && board[15] && board[13]) result <= 2'b10;
-	      else if (board[11] && board[9] && board[7]) result <= 2'b10;
-	      else if (board[5] && board[3] && board[1]) result <= 2'b10;
+	      else if (board[17] & board[15] & board[13]) result <= 2'b10;
+	      else if (board[11] & board[9] & board[7]) result <= 2'b10;
+	      else if (board[5] & board[3] & board[1]) result <= 2'b10;
 
-	      else if (board[17] && board[11] && board[5]) result <= 2'b10;
-	      else if (board[15] && board[9] && board[3]) result <= 2'b10;
-	      else if (board[13] && board[7] && board[1]) result <= 2'b10;
+	      else if (board[17] & board[11] & board[5]) result <= 2'b10;
+	      else if (board[15] & board[9] & board[3]) result <= 2'b10;
+	      else if (board[13] & board[7] & board[1]) result <= 2'b10;
 
-	      else if (board[17] && board[9] && board[1]) result <= 2'b10;
-	      else if (board[13] && board[9] && board[5]) result <= 2'b10;
+	      else if (board[17] & board[9] & board[1]) result <= 2'b10;
+	      else if (board[13] & board[9] & board[5]) result <= 2'b10;
 
 
 	    // board가 꽉 채워졌는지 판별
