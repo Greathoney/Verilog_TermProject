@@ -102,7 +102,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	end
 	// key_data
 	always @ (posedge rst or posedge clk1) begin
-		if (rst) IsRight <= 0;
+		// if (rst) IsRight <= 0;
 		case (state)
 			column1 : case (key_row)
 				4'b0001 : key_data <= 1; // key_1
@@ -133,7 +133,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	//main == 0 이면 필요없어진다
 
 	always @(posedge clk) begin // clk2 설계
-		if (IsMain == 1) begin
+		if (1 == 1) begin
 			if (clk_count2 >= 24999) begin
 				clk_count2 <= 0;
 				clk2 <= 1;
@@ -143,7 +143,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 				clk2 <= 0;
 			end
 		end
-		else if (IsMain == 0 && result == 0) begin
+		else if (1==1) begin
 			if (clk_count >= 24999) begin
 				clk_count <= 0;
 				clk2 <= 1;
@@ -222,7 +222,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
         2: begin
           case(sel_seg)
 	        //P1 lose를 7segment로 띄우게 된다.
-            0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1110011; end //p =>abefg
+            0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
             1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
             2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
             3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
@@ -235,9 +235,9 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
         3: begin
           case(sel_seg)
-            0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1111000; end // t => defg
-            1: begin seg_com <= 8'b01111111; seg_txt <= 7'b0110000; end // i => ef
-            2: begin seg_com <= 8'b10111111; seg_txt <= 7'b1111001; end //E => adefg
+            0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1111000; end // t => defg
+            1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0110000; end // i => ef
+            2: begin seg_com <= 8'b11011111; seg_txt <= 7'b1111001; end //E => adefg
 													default: begin seg_com <= 8'b11111111; end
           endcase
         end
