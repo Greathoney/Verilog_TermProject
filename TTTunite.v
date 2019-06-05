@@ -149,26 +149,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	end
 
 
-	always @(posedge clk1) begin //clk1을 기반으로 sel_seg 설계
-		if (IsMain == 1) begin
-			if (sel_seg == 7) sel_seg <= 0;
-			else sel_seg <= sel_seg + 1;
-		end
-	end
 
-	always @(sel_seg) //sel_seg을 기반으로 7-segment에 표시
-		if (IsMain == 1) begin
-			case(sel_seg)
-				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
-				1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1010000; end //r =>eg
-				2: begin seg_com <= 8'b11011111; seg_txt <= 7'b1111001; end //e =>adefg
-				3: begin seg_com <= 8'b11101111; seg_txt <= 7'b1101101; end //s =>acdfg
-				4: begin seg_com <= 8'b11110111; seg_txt <= 7'b1101101; end //s =>acdfg
-				5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0000000; end //' '
-				6: begin seg_com <= 8'b11111101; seg_txt <= 7'b0111110; end //u =>bcdef
-				7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1110011; end //p =>abefg
-			endcase
-		end
 
 
 	//main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
@@ -187,14 +168,33 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
   end
 
   always @(posedge clk3) begin
-    if(sel_seg == 1 && result == 0) sel_seg <= 0;  //승패가 갈리지 않았을 때 2글자만 띄우게 된다.
-    else if (sel_seg == 4 && result == 3) sel_seg <= 0;  //무승부일때 4글자만 띄우게 된다.
-    else if (sel_seg == 7 && result != 0) sel_seg <= 0; //승패가 갈릴때 8글자 모두 쓰게 된다.
-    else sel_seg <= sel_seg + 1;
-  end
+	if (IsMain == 1) begin
+		if (sel_seg == 7) sel_seg <= 0;
+		else sel_seg <= sel_seg + 1;
+	end
+	else begin
+	    if(sel_seg == 1 && result == 0) sel_seg <= 0;  //승패가 갈리지 않았을 때 2글자만 띄우게 된다.
+	    else if (sel_seg == 4 && result == 3) sel_seg <= 0;  //무승부일때 4글자만 띄우게 된다.
+	    else if (sel_seg == 7 && result != 0) sel_seg <= 0; //승패가 갈릴때 8글자 모두 쓰게 된다.
+	    else sel_seg <= sel_seg + 1;
+	  end
+	end
 
   always @(sel_seg) begin
-    if(IsMain==0 && result == 0)begin
+	if (IsMain == 1) begin // sel_seg 합침
+		case(sel_seg)
+			0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
+			1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1010000; end //r =>eg
+			2: begin seg_com <= 8'b11011111; seg_txt <= 7'b1111001; end //e =>adefg
+			3: begin seg_com <= 8'b11101111; seg_txt <= 7'b1101101; end //s =>acdfg
+			4: begin seg_com <= 8'b11110111; seg_txt <= 7'b1101101; end //s =>acdfg
+			5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0000000; end //' '
+			6: begin seg_com <= 8'b11111101; seg_txt <= 7'b0111110; end //u =>bcdef
+			7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1110011; end //p =>abefg
+		endcase
+	end
+
+    else if(IsMain==0 && result == 0)begin
       if (IsTurnO == 1) begin
         //7-segment에 P2를 표시하게 된다.
         case(sel_seg)
