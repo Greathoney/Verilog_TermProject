@@ -39,10 +39,9 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
   end
 
   always @(posedge clk1) begin
-    if(sel_seg == 1 && result == 0) sel_seg <= 0;
-    else if (result == 0) sel_seg <= sel_seg + 1;
-
-    if (sel_seg == 7 && result != 0) sel_seg <= 0;  //승패가 끝났을 때
+    if(sel_seg == 1 && result == 0) sel_seg <= 0;  //승패가 갈리지 않았을 때 2글자만 띄우게 된다.
+    else if (sel_seg == 4 && result == 3) sel_seg <= 0;  //무승부일때 4글자만 띄우게 된다.
+    else if (sel_seg == 7 && result != 0) sel_seg <= 0; //승패가 갈릴때 8글자 모두 쓰게 된다.
     else sel_seg <= sel_seg + 1;
   end
 
@@ -50,40 +49,57 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
     if(IsMain==0 && result == 0)begin
       if (IsTurnO == 1) begin
         //7-segment에 P2를 표시하게 된다.
-      end
-      case(sel_seg)
-        0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
-        1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1101101; end //2 => abdeg
-      endcase
-    end
+        case(sel_seg)
+          0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
+          1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1101101; end //2 => abdeg
+          endcase
+        end
 
-    else begin
-      //7-segment에 P1을 표시하게 된다.
-      case(sel_seg)
-        0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
-        1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
-      endcase
-	  end
+      else begin
+        //7-segment에 P1을 표시하게 된다.
+        case(sel_seg)
+          0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
+          1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
+          endcase
+        end
+      end
 
     if (result == 1) begin
       case(sel_seg)
 	    //P2 lose segment를 띄우게 된다.
-        0: begin end
-        1: begin end
+      0: begin seg_com <= 8'b01111111; end //P
+      1: begin seg_com <= 8'b10111111; end //2
+      2: begin seg_com <= 8'b11011111; end
+      3: begin seg_com <= 8'b11101111; end
+      4: begin seg_com <= 8'b11110111; end //L
+      5: begin seg_com <= 8'b11111011; end //O
+      6: begin seg_com <= 8'b11111101; end //S
+      7: begin ; end //E
       endcase
     end
 
     else if (result == 2) begin
       case(sel_seg)
 	    //P1 lose를 7segment로 띄우게 된다.
-        0: begin end
-        1: begin end
-      endcase
+        0: begin seg_com <= 8'b11111111; seg_txt <=  end //P
+        1: begin seg_com <= 8'b10111111; end //1
+        2: begin seg_com <= 8'b11011111; end
+        3: begin seg_com <= 8'b11101111; end
+        4: begin seg_com <= 8'b01110111; end //L
+        5: begin seg_com <= 8'b01111011; end //O
+        6: begin seg_com <= 8'b01111101; end //S
+        7: begin ; end //E
+        endcase
     end
 
     else if (result == 3) begin
-      case
-
+      case(sel_seg)
+        0: begin end //d
+        1: begin end //r
+        2: begin end //A
+        3: begin end //W
+      endcase
+    end
 	end
 
   // key data를 board로
