@@ -93,9 +93,9 @@ module gameState(clk, key_data, IsMain, IsTurnO, board, seg_txt, seg_com, dot_co
 
     else if (result == 3) begin
       case(sel_seg)
-        0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1111000; end // t => defg
-        1: begin seg_com <= 8'b01111111; seg_txt <= 7'b0110000; end // i => ef 
-        2: begin seg_com <= 8'b10111111; seg_txt <= 7'b1111001; end // E => adefg
+        0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1111000; end // t => defg
+        1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0110000; end // i => ef 
+        2: begin seg_com <= 8'b11011111; seg_txt <= 7'b1111001; end // E => adefg
         //3: begin end // => 
       endcase
     end
