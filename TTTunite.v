@@ -58,13 +58,6 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		else keydata_1 <= 0;
 	end
 
-
-	always @(posedge rst or negedge IsMain) begin //reset 할 수 있는 부분
-		IsTurnO <= 0;
-		board <= 18'b00_00_00_00_00_00_00_00_00;
-	end
-
-
 	//Module keypad_scan
 	//키패드 스캔하기, key_data를 받아옴
 	//누르지 않을때는 key_data = 12'b0000_0000_0000 누르는 동안 어느 숫자가 1로 변함
@@ -251,19 +244,22 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	end
 
   // key data를 board로
-	always @(posedge key_data) begin
-	    case (key_data)
-		    1: if(IsTurnO) board[17] = 1; else board[16] = 1;
-		    2: if(IsTurnO) board[15] = 1; else board[14] = 1;
-		    3: if(IsTurnO) board[13] = 1; else board[12] = 1;
-		    4: if(IsTurnO) board[11] = 1; else board[10] = 1;
-		    5: if(IsTurnO) board[9] = 1; else board[8] = 1;
-		    6: if(IsTurnO) board[7] = 1; else board[6] = 1;
-		    7: if(IsTurnO) board[5] = 1; else board[4] = 1;
-		    8: if(IsTurnO) board[3] = 1; else board[2] = 1;
-		    9: if(IsTurnO) board[1] = 1; else board[0] = 1;
-		    // board[18 - 2 * key_data + IsTurnO] = 1;
-		endcase
+	always @(posedge key_data or posedge rst) begin
+		if (rst) board <= 0;
+		else begin
+		    case (key_data)
+			    1: if(IsTurnO) board[17] = 1; else board[16] = 1;
+			    2: if(IsTurnO) board[15] = 1; else board[14] = 1;
+			    3: if(IsTurnO) board[13] = 1; else board[12] = 1;
+			    4: if(IsTurnO) board[11] = 1; else board[10] = 1;
+			    5: if(IsTurnO) board[9] = 1; else board[8] = 1;
+			    6: if(IsTurnO) board[7] = 1; else board[6] = 1;
+			    7: if(IsTurnO) board[5] = 1; else board[4] = 1;
+			    8: if(IsTurnO) board[3] = 1; else board[2] = 1;
+			    9: if(IsTurnO) board[1] = 1; else board[0] = 1;
+			    // board[18 - 2 * key_data + IsTurnO] = 1;
+			endcase
+		end
 	end
 
 	always @(board or posedge rst) begin
@@ -307,7 +303,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 	    else begin result = 2'b00; end
 
-			IsTurnO = ~IsTurnO;
+			IsTurnO <= ~IsTurnO;
 		//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
 	end
 
