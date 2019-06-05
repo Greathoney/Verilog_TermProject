@@ -418,7 +418,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 				0: fun = 3'b000;
 				1: if (isCenter) fun = 3'b010; else fun = 3'b101;	// X
 				2: if (isCenter) fun = 3'b101; else fun = 3'b111;	// O
-				default: fun = 3'b000;
+				default: fun = 3'b111;
 			endcase
 		end
 
