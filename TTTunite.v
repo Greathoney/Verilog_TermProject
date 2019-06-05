@@ -263,8 +263,9 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		end
 	end
 
-	always @(IsTurnO or posedge rst) begin
-		if(rst) IsTurnO <= 0;
+
+	always @(negedge key_data) begin  //이거 외않돼
+		if (rst) IsTurnO <= 0;
 		//3목을 판별하는 알고리즘
 		//IsTurnO를 이용한다.
 	    else if (IsTurnO) begin
