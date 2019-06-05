@@ -133,6 +133,16 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 				clk2 <= 0;
 			end
 		end
+		else if (IsMain == 0 && result == 0) begin
+			if (clk_count >= 24999) begin
+				clk_count <= 0;
+				clk2 <= 1;
+			end
+			else begin
+				clk_count <= clk_count + 1;
+				clk2 <= 0;
+			end
+		end
 	end
 
 	always @(clk) begin  //키 1번이 입력되면 Main이 풀리고 게임모드로 진입하도록 설계
@@ -143,25 +153,9 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	end
 
 
-
-
-
 	//main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
 
-  always @(posedge clk) begin // clk1 설계
-    if (IsMain == 0 && result == 0) begin
-      if (clk_count >= 24999) begin
-        clk_count <= 0;
-        clk3 <= 1;
-      end
-      else begin
-        clk_count <= clk_count + 1;
-        clk3 <= 0;
-      end
-    end
-  end
-
-  always @(posedge clk3) begin
+  always @(posedge clk2) begin
 	if (IsMain == 1) begin
 		if (sel_seg == 7) sel_seg <= 0;
 		else sel_seg <= sel_seg + 1;
