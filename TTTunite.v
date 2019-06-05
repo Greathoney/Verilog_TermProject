@@ -60,7 +60,6 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 
 	always @(posedge rst or negedge IsMain) begin //reset 할 수 있는 부분
-		IsRight <= 0;
 		IsTurnO <= 0;
 		board <= 18'b00_00_00_00_00_00_00_00_00;
 	end
@@ -95,7 +94,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		end
 	end
 	// key_data
-	always @ (posedge clk1) begin
+	always @ (posedge rst or posedge clk1) begin
+		if (rst) IsRight <= 0;
 		case (state)
 			column1 : case (key_row)
 				4'b0001 : key_data <= 1; // key_1
@@ -305,6 +305,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	      end
 
 	    else begin result = 2'b00; end
+
+			IsTurnO = ~IsTurnO;
 		//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
 	end
 
