@@ -60,10 +60,10 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 		if (key_data == 1) keydata_1 <= 1;
 		else keydata_1 <= 0;
-		
+
 		if(key_data == 4) check_keypad <= 1;
 		else check_keypad <= 0;
-		
+
 		if (board[17:16]!=2'b00) check_board[0] = 1; else check_board[0] = 0;
 		if (board[15:14]!=2'b00) check_board[1] = 1; else check_board[1] = 0;
 		if (board[13:12]!=2'b00) check_board[2] = 1; else check_board[2] = 0;
@@ -72,11 +72,11 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		if (board[7:6]!=2'b00) check_board[5] = 1; else check_board[5] = 0;
 		if (board[5:4]!=2'b00) check_board[6] = 1; else check_board[6] = 0;
 		if (board[3:2]!=2'b00) check_board[7] = 1; else check_board[7] = 0;
-		
+
 	end
-	
-	
-	
+
+
+
 
 	//Module keypad_scan
 	//키패드 스캔하기, key_data를 받아옴
@@ -173,7 +173,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	//main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
 
   always @(posedge clk2) begin
-	if (IsMain == 1) begin
+	if (IsMain_dip == 1) begin
 		if (sel_seg == 7) sel_seg <= 0;
 		else sel_seg <= sel_seg + 1;
 	end
@@ -216,7 +216,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
           endcase
         end
       end
-	
+
     if (IsMain==0 && result == 1) begin
       case(sel_seg)
 	    //P2 lose segment를 띄우게 된다.
@@ -279,7 +279,6 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		if (rst) IsTurnO <= 0;
 		//3목을 판별하는 알고리즘
 		//IsTurnO를 이용한다.
-	    else if (IsTurnO==0) begin
 	      // X의 삼목 판별
 	      if (board[16] && board[14] && board[12]) result <= 2'b01;
 	      else if (board[10] && board[8] && board[6]) result <= 2'b01;
@@ -291,10 +290,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 	      else if (board[16] && board[8] && board[0]) result <= 2'b01;
 	      else if (board[12] && board[8] && board[4]) result <= 2'b01;
-	    end
-	    else begin
 	      // O의 삼목 판별
-	      if (board[17] && board[15] && board[13]) result <= 2'b10;
+	      else if (board[17] && board[15] && board[13]) result <= 2'b10;
 	      else if (board[11] && board[9] && board[7]) result <= 2'b10;
 	      else if (board[5] && board[3] && board[1]) result <= 2'b10;
 
@@ -304,10 +301,10 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 	      else if (board[17] && board[9] && board[1]) result <= 2'b10;
 	      else if (board[13] && board[9] && board[5]) result <= 2'b10;
-	    end
+
 
 	    // board가 꽉 채워졌는지 판별
-	    if ((board[17]|board[16]) & (board[15]|board[14]) & (board[13]|board[12]) &
+	    else if ((board[17]|board[16]) & (board[15]|board[14]) & (board[13]|board[12]) &
 	      (board[11]|board[10]) & (board[9]|board[8]) & (board[7]|board[6]) &
 	      (board[5]|board[4]) & (board[3]|board[2]) & (board[1]|board[0]))
 	      begin
@@ -406,7 +403,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 				9: rom1 = {3'b000, fun(1, board[1:0]), 1'b0, fun(1, board[7:6]), 1'b0, fun(1, board[13:12])};
 				10: rom1 = {3'b000, fun(0, board[1:0]), 1'b0, fun(0, board[7:6]), 1'b0, fun(0, board[13:12])};
 				default: rom1 = 14'b00000000000000;
-				
+
 			endcase
 		end
 
