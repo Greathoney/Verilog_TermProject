@@ -95,21 +95,18 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 				4'b0010 : key_data <= 4; // key_4
 				4'b0100 : key_data <= 7; // key_7
 				4'b1000 : IsRight <= 0; // key_*
-				default : key_data <= 0;
 			endcase
 			column2 : case (key_row)
 				4'b0001 : key_data <= 2; // key_2
 				4'b0010 : key_data <= 5; // key_5
 				4'b0100 : key_data <= 8; // key_8
 				4'b1000 : key_data <= 0; // key_0 : 아무일 안함
-				default : key_data <= 0;
 			endcase
 		  column3 : case (key_row)
 				4'b0001 : key_data <= 3; // key_3
 				4'b0010 : key_data <= 6; // key_6
 				4'b0100 : key_data <= 9; // key_9
 				4'b1000 : IsRight <= 1; // key_#
-				default : key_data <= 0;
 			endcase
 			default : key_data <= 0;
 		endcase
