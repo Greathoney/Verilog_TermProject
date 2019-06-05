@@ -22,7 +22,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	reg [17:0] board = 18'b00_00_00_00_00_00_00_00_00; //보드에 어떤 돌이 놓여있는지 확인 0: 없음, 1: X돌, 2: O돌
 	reg check_IsMain, check_notIsMain;
 	reg [1:0] check_result;
-	
+
 	//keypad_scan
 	reg	[2:0] state;
 	reg [13:0] counts;
@@ -166,16 +166,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	//main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
 
   always @(posedge clk2) begin
-	if (IsMain_dip == 1) begin
-		if (sel_seg == 7) sel_seg <= 0;
+	if (sel_seg == 7) sel_seg <= 0;
 		else sel_seg <= sel_seg + 1;
-	end
-	else begin
-	    if(sel_seg == 1 && result == 0) sel_seg <= 0;  //승패가 갈리지 않았을 때 2글자만 띄우게 된다.
-	    else if (sel_seg == 4 && result == 3) sel_seg <= 0;  //무승부일때 4글자만 띄우게 된다.
-	    else if (sel_seg >= 7) sel_seg <= 0; //승패가 갈릴때 8글자 모두 쓰게 된다.
-	    else sel_seg <= sel_seg + 1;
-	  end
 	end
 
   always @(sel_seg) begin
@@ -200,6 +192,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
             case(sel_seg)
               0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
               1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => abdeg
+							default: begin seg_com <= 8'b11111111; end
             endcase
           end
 
@@ -208,6 +201,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
             case(sel_seg)
               0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //P => abefg
               1: begin seg_com <= 8'b10111111; seg_txt <= 7'b0000110; end //1 => bc
+													default: begin seg_com <= 8'b11111111; end
             endcase
           end
 		end
@@ -244,6 +238,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
             0: begin seg_com <= 8'b11111111; seg_txt <= 7'b1111000; end // t => defg
             1: begin seg_com <= 8'b01111111; seg_txt <= 7'b0110000; end // i => ef
             2: begin seg_com <= 8'b10111111; seg_txt <= 7'b1111001; end //E => adefg
+													default: begin seg_com <= 8'b11111111; end
           endcase
         end
       endcase
