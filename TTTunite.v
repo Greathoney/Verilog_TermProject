@@ -185,7 +185,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	  end
 	end
 
-  always @(sel_seg or result) begin
+  always @(sel_seg) begin
 	if (IsMain == 1) begin // sel_seg 합침
 		case(sel_seg)
 			0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
@@ -258,17 +258,17 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
   // key data를 board로
 	always @(posedge clk2 or posedge rst) begin
 		if (rst) board <= 0;
-		else begin
+		else if (IsMain_dip == 0 ) begin
 		    case (key_data)
-			    1: if(IsTurnO) board[17] <= 1; else board[16] <= 1;
-			    2: if(IsTurnO) board[15] <= 1; else board[14] <= 1;
-			    3: if(IsTurnO) board[13] <= 1; else board[12] <= 1;
-			    4: if(IsTurnO) board[11] <= 1; else board[10] <= 1;
-			    5: if(IsTurnO) board[9] <= 1; else board[8] <= 1;
-			    6: if(IsTurnO) board[7] <= 1; else board[6] <= 1;
-			    7: if(IsTurnO) board[5] <= 1; else board[4] <= 1;
-			    8: if(IsTurnO) board[3] <= 1; else board[2] <= 1;
-			    9: if(IsTurnO) board[1] <= 1; else board[0] <= 1;
+			    1: begin if(IsTurnO) board[17] <= 1; else board[16] <= 1; if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    2: begin if(IsTurnO) board[15] <= 1; else board[14] <= 1; if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    3: begin if(IsTurnO) board[13] <= 1; else board[12] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    4: begin if(IsTurnO) board[11] <= 1; else board[10] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    5: begin if(IsTurnO) board[9] <= 1; else board[8] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    6: begin if(IsTurnO) board[7] <= 1; else board[6] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    7: begin if(IsTurnO) board[5] <= 1; else board[4] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    8: begin if(IsTurnO) board[3] <= 1; else board[2] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
+			    9: begin if(IsTurnO) board[1] <= 1; else board[0] <= 1;if (IsTurnO==1) IsTurnO = 0; else IsTurnO = 1; end
 			    // board[18 - 2 * key_data + IsTurnO] <= 1;
 			endcase
 		end
@@ -276,7 +276,6 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 
 	always @(negedge key_data) begin  //이거 외않돼
-		if (rst) IsTurnO <= 0;
 		//3목을 판별하는 알고리즘
 		//IsTurnO를 이용한다.
 	      // X의 삼목 판별
