@@ -266,10 +266,11 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		endcase
 	end
 
-	always @(board) begin
+	always @(board or posedge rst) begin
+		if(rst) IsTurnO <= 0;
 		//3목을 판별하는 알고리즘
 		//IsTurnO를 이용한다.
-	    if (IsTurnO) begin
+	    else if (IsTurnO) begin
 	      // X의 삼목 판별
 	      if (board[16] && board[14] && board[12]) result = 2'b01;
 	      else if (board[10] && board[8] && board[6]) result = 2'b01;
