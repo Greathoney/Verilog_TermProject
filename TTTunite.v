@@ -54,18 +54,16 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	reg clk4;
 	reg [14:0] count;
 
-
-	// TEST
 	always @(posedge clk) begin
 		if (IsMain == 1) begin check_IsMain <= 1; check_notIsMain <= 0; end
 		else if (IsMain == 0) begin check_IsMain <= 0; check_notIsMain <= 1; end
 
 		if (key_data == 1) keydata_1 <= 1;
 		else keydata_1 <= 0;
-
-		if(key_data == 5) check_keypad <= 1;
+		
+		if(key_data == 4) check_keypad <= 1;
 		else check_keypad <= 0;
-
+		
 		if (board[17:16]!=2'b00) check_board[0] = 1; else check_board[0] = 0;
 		if (board[15:14]!=2'b00) check_board[1] = 1; else check_board[1] = 0;
 		if (board[13:12]!=2'b00) check_board[2] = 1; else check_board[2] = 0;
@@ -74,11 +72,11 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		if (board[7:6]!=2'b00) check_board[5] = 1; else check_board[5] = 0;
 		if (board[5:4]!=2'b00) check_board[6] = 1; else check_board[6] = 0;
 		if (board[3:2]!=2'b00) check_board[7] = 1; else check_board[7] = 0;
-
+		
 	end
-
-
-
+	
+	
+	
 
 	//Module keypad_scan
 	//키패드 스캔하기, key_data를 받아옴
@@ -89,57 +87,50 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	assign key_col = state;
 
 	always @(posedge clk or posedge rst) begin
-		if (IsMain==0) begin
-			if(rst) begin counts <= 0; clk1 <= 1; end
-			else if (counts >= 12499) begin counts <= 0; clk1 <= !clk1; end
-			else counts <= counts +1;
-		end
+		if(rst) begin counts <= 0; clk1 <= 1; end
+		else if (counts >= 12499) begin counts <= 0; clk1 <= !clk1; end
+		else counts <= counts +1;
 	end
 
 	// FSM drive
 	always @(posedge clk1 or posedge rst) begin
-		if (IsMain == 0) begin
-			if (rst) state <= no_scan;
-			else begin
-				if (!key_stop) begin
-					case (state)
-						no_scan : state <= column1;
-						column1 : state <= column2;
-						column2 : state <= column3;
-						column3 : state <= column1;
-						default : state <= no_scan;
-					endcase
-				end
+		if (rst) state <= no_scan;
+		else begin
+			if (!key_stop) begin
+				case (state)
+					no_scan : state <= column1;
+					column1 : state <= column2;
+					column2 : state <= column3;
+					column3 : state <= column1;
+					default : state <= no_scan;
+				endcase
 			end
 		end
 	end
-
 	// key_data
 	always @ (posedge rst or posedge clk1) begin
-		if (IsMain == 0) begin
-			if (rst) IsRight <= 0;
-			case (state)
-				column1 : case (key_row)
-					4'b0001 : key_data <= 1; // key_1
-					4'b0010 : key_data <= 4; // key_4
-					4'b0100 : key_data <= 7; // key_7
-					4'b1000 : IsRight <= 0; // key_*
-				endcase
-				column2 : case (key_row)
-					4'b0001 : key_data <= 2; // key_2
-					4'b0010 : key_data <= 5; // key_5
-					4'b0100 : key_data <= 8; // key_8
-					4'b1000 : key_data <= 0; // key_0 : 아무일 안함
-				endcase
-			  column3 : case (key_row)
-					4'b0001 : key_data <= 3; // key_3
-					4'b0010 : key_data <= 6; // key_6
-					4'b0100 : key_data <= 9; // key_9
-					4'b1000 : IsRight <= 1; // key_#
-				endcase
-				//default : key_data <= 0;
+		if (rst) IsRight <= 0;
+		case (state)
+			column1 : case (key_row)
+				4'b0001 : key_data <= 1; // key_1
+				4'b0010 : key_data <= 4; // key_4
+				4'b0100 : key_data <= 7; // key_7
+				4'b1000 : IsRight <= 0; // key_*
 			endcase
-		end
+			column2 : case (key_row)
+				4'b0001 : key_data <= 2; // key_2
+				4'b0010 : key_data <= 5; // key_5
+				4'b0100 : key_data <= 8; // key_8
+				4'b1000 : key_data <= 0; // key_0 : 아무일 안함
+			endcase
+		  column3 : case (key_row)
+				4'b0001 : key_data <= 3; // key_3
+				4'b0010 : key_data <= 6; // key_6
+				4'b0100 : key_data <= 9; // key_9
+				4'b1000 : IsRight <= 1; // key_#
+			endcase
+			//default : key_data <= 0;
+		endcase
 	end
 
 
@@ -182,11 +173,11 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	//main(=0)상태가 아닌 게임상태에서 입력도 받고 출력도 하는 모듈
 
   always @(posedge clk2) begin
-		if (IsMain == 1) begin
-			if (sel_seg == 7) sel_seg <= 0;
-			else sel_seg <= sel_seg + 1;
-		end
-		else begin
+	if (IsMain == 1) begin
+		if (sel_seg == 7) sel_seg <= 0;
+		else sel_seg <= sel_seg + 1;
+	end
+	else begin
 	    if(sel_seg == 1 && result == 0) sel_seg <= 0;  //승패가 갈리지 않았을 때 2글자만 띄우게 된다.
 	    else if (sel_seg == 4 && result == 3) sel_seg <= 0;  //무승부일때 4글자만 띄우게 된다.
 	    else if (sel_seg == 7 && result != 0) sel_seg <= 0; //승패가 갈릴때 8글자 모두 쓰게 된다.
@@ -195,18 +186,18 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	end
 
   always @(sel_seg) begin
-		if (IsMain == 1) begin // sel_seg 합침
-			case(sel_seg)
-				0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
-				1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1010000; end //r =>eg
-				2: begin seg_com <= 8'b11011111; seg_txt <= 7'b1111001; end //e =>adefg
-				3: begin seg_com <= 8'b11101111; seg_txt <= 7'b1101101; end //s =>acdfg
-				4: begin seg_com <= 8'b11110111; seg_txt <= 7'b1101101; end //s =>acdfg
-				5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0000000; end //' '
-				6: begin seg_com <= 8'b11111101; seg_txt <= 7'b0111110; end //u =>bcdef
-				7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1110011; end //p =>abefg
-			endcase
-		end
+	if (IsMain == 1) begin // sel_seg 합침
+		case(sel_seg)
+			0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
+			1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1010000; end //r =>eg
+			2: begin seg_com <= 8'b11011111; seg_txt <= 7'b1111001; end //e =>adefg
+			3: begin seg_com <= 8'b11101111; seg_txt <= 7'b1101101; end //s =>acdfg
+			4: begin seg_com <= 8'b11110111; seg_txt <= 7'b1101101; end //s =>acdfg
+			5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0000000; end //' '
+			6: begin seg_com <= 8'b11111101; seg_txt <= 7'b0111110; end //u =>bcdef
+			7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1110011; end //p =>abefg
+		endcase
+	end
 
     else if(IsMain==0 && result == 0)begin
       if (IsTurnO == 1) begin
@@ -225,18 +216,18 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
           endcase
         end
       end
-
+	
     if (IsMain==0 && result == 1) begin
       case(sel_seg)
 	    //P2 lose segment를 띄우게 된다.
-      0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
-      1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => ABDEG
-      2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
-      3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
-      4: begin seg_com <= 8'b11110111; seg_txt <= 7'b0111000; end //L => def
-      5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0111111; end //O => abcdef
-      6: begin seg_com <= 8'b11111101; seg_txt <= 7'b1101101; end //s =>acdfg
-      7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1111001; end //E => adefg
+	      0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
+	      1: begin seg_com <= 8'b10111111; seg_txt <= 7'b1011011; end //2 => ABDEG
+	      2: begin seg_com <= 8'b11011111; seg_txt <= 7'b0000000; end //' '
+	      3: begin seg_com <= 8'b11101111; seg_txt <= 7'b0000000; end //' '
+	      4: begin seg_com <= 8'b11110111; seg_txt <= 7'b0111000; end //L => def
+	      5: begin seg_com <= 8'b11111011; seg_txt <= 7'b0111111; end //O => abcdef
+	      6: begin seg_com <= 8'b11111101; seg_txt <= 7'b1101101; end //s =>acdfg
+	      7: begin seg_com <= 8'b11111110; seg_txt <= 7'b1111001; end //E => adefg
       endcase
     end
 
@@ -267,21 +258,19 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
   // key data를 board로
 	always @(posedge clk2 or posedge rst) begin
 		if (rst) board <= 0;
-		if (IsMain == 0) begin
-			else begin
-			    case (key_data)
-				    1: if(IsTurnO) board[17] <= 1; else board[16] <= 1;
-				    2: if(IsTurnO) board[15] <= 1; else board[14] <= 1;
-				    3: if(IsTurnO) board[13] <= 1; else board[12] <= 1;
-				    4: if(IsTurnO) board[11] <= 1; else board[10] <= 1;
-				    5: if(IsTurnO) board[9] <= 1; else board[8] <= 1;
-				    6: if(IsTurnO) board[7] <= 1; else board[6] <= 1;
-				    7: if(IsTurnO) board[5] <= 1; else board[4] <= 1;
-				    8: if(IsTurnO) board[3] <= 1; else board[2] <= 1;
-				    9: if(IsTurnO) board[1] <= 1; else board[0] <= 1;
-				    // board[18 - 2 * key_data + IsTurnO] <= 1;
-				endcase
-			end
+		else begin
+		    case (key_data)
+			    1: if(IsTurnO) board[17] <= 1; else board[16] <= 1;
+			    2: if(IsTurnO) board[15] <= 1; else board[14] <= 1;
+			    3: if(IsTurnO) board[13] <= 1; else board[12] <= 1;
+			    4: if(IsTurnO) board[11] <= 1; else board[10] <= 1;
+			    5: if(IsTurnO) board[9] <= 1; else board[8] <= 1;
+			    6: if(IsTurnO) board[7] <= 1; else board[6] <= 1;
+			    7: if(IsTurnO) board[5] <= 1; else board[4] <= 1;
+			    8: if(IsTurnO) board[3] <= 1; else board[2] <= 1;
+			    9: if(IsTurnO) board[1] <= 1; else board[0] <= 1;
+			    // board[18 - 2 * key_data + IsTurnO] <= 1;
+			endcase
 		end
 	end
 
@@ -290,8 +279,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 		if (rst) IsTurnO <= 0;
 		//3목을 판별하는 알고리즘
 		//IsTurnO를 이용한다.
-		if (IsMain == 0) begin
-	    if (IsTurnO) begin
+	    else if (IsTurnO==0) begin
 	      // X의 삼목 판별
 	      if (board[16] && board[14] && board[12]) result <= 2'b01;
 	      else if (board[10] && board[8] && board[6]) result <= 2'b01;
@@ -328,9 +316,8 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 
 	    else begin result <= 2'b00; end
 
-			IsTurnO <= ~IsTurnO;
+		//IsTurnO <= ~IsTurnO;
 		//승패가 나오면 그 데이터를 가지고 다른 모듈에서 출력
-		end
 	end
 
 
@@ -419,7 +406,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 				9: rom1 = {3'b000, fun(1, board[1:0]), 1'b0, fun(1, board[7:6]), 1'b0, fun(1, board[13:12])};
 				10: rom1 = {3'b000, fun(0, board[1:0]), 1'b0, fun(0, board[7:6]), 1'b0, fun(0, board[13:12])};
 				default: rom1 = 14'b00000000000000;
-
+				
 			endcase
 		end
 
