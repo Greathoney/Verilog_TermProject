@@ -185,7 +185,7 @@ module TTT(IsMain_dip, keydata_1, clk, rst, key_row, key_col, seg_txt, seg_com, 
 	  end
 	end
 
-  always @(sel_seg) begin
+  always @(sel_seg or result) begin
 	if (IsMain == 1) begin // sel_seg 합침
 		case(sel_seg)
 			0: begin seg_com <= 8'b01111111; seg_txt <= 7'b1110011; end //p =>abefg
