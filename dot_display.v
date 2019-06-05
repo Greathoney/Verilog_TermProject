@@ -1,7 +1,7 @@
 
-module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
+module dot_display(clk, rst, board, dot_col, dot_row, IsRight);
 
-	input freq;
+	input clk;
 	input rst;
 	input [17:0] board;
 	input IsRight;
@@ -13,19 +13,19 @@ module dot_display(freq, rst, board, dot_col, dot_row, IsRight);
 	reg [3:0] cnt_row, cnt_fra;
 	reg [7:0] cnt_col;
 	reg clk_col, clk_fra;
-	reg clk;
+	reg clk4;
 	reg [14:0] count;
 
 	// 25MHz 인 Entry II의 클록을 1KHz의 클록으로 분주한다.
-	always @ (posedge freq or posedge rst) begin
-		if (rst) begin count <= 0; clk <= 1; end
-		else if (count >= 12499) begin count <= 0; clk <= ~clk; end
+	always @ (posedge clk or posedge rst) begin
+		if (rst) begin count <= 0; clk4 <= 1; end
+		else if (count >= 12499) begin count <= 0; clk4 <= ~clk4; end
 		else count <= count + 1;
 	end
 
 	// 클록에 동기하여 cnt_row를 카운트하여 11개의 row 스캔 신호를 만든다.
 	// row 스캔이 끝날 때마다 한번의 clk_col 신호를 생성한다.
-	always @ (posedge clk or posedge rst) begin
+	always @ (posedge clk4 or posedge rst) begin
 		if (rst) begin
 			dot_row <= 1;
 			cnt_row <= 0;
